@@ -190,5 +190,31 @@
 </div>
 </section>
 </div>
+  <script>
+   const API_URL = '/api/settings';
+   document.addEventListener("DOMContentLoaded", async () => {
+     try {
+       const response = await fetch(API_URL);
+       const data = await response.json();
+       if (data.announcement) {
+         document.querySelector('.announcement-box').innerHTML =
+           `<strong>Duyuru:</strong> ${data.announcement}`;
+       }
+       const companyCards = document.querySelectorAll('.company-card');
+       if (data.companies && data.companies.length > 0) {
+         data.companies.forEach((company, index) => {
+           if (companyCards[index]) {
+             companyCards[index].href = company.link;
+             companyCards[index].querySelector('img').src = company.logo;
+           }
+         });
+       }
+     } catch (error) {
+       console.error(error);
+     }
+   });
+</script>
+</body>
+</html>
 </body>
 </html>
