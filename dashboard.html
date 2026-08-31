@@ -2,48 +2,193 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Kontrol Paneli</title>
+<title>Dashboard</title>
 <style>
-   body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
-   .module { background: white; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
-   .admin-only { border-left: 5px solid red; }
-   .user-only { border-left: 5px solid green; }
-   .hidden { display: none; }
-   button { padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer; }
+   * {
+     box-sizing: border-box;
+     margin: 0;
+     padding: 0;
+     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+   }
+   body {
+     background: linear-gradient(135deg, #0b132b 0%, #1c2541 100%);
+     color: #f1f5f9;
+     min-height: 100vh;
+     padding: 32px;
+     display: flex;
+     flex-direction: column;
+     gap: 32px;
+   }
+   .top-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     gap: 20px;
+     width: 100%;
+   }
+   .announcement-box {
+     background: rgba(255, 255, 255, 0.04);
+     backdrop-filter: blur(12px);
+     border: 1px solid rgba(255, 255, 255, 0.08);
+     border-left: 4px solid #38bdf8;
+     border-radius: 12px;
+     padding: 14px 20px;
+     font-size: 0.95rem;
+     flex: 1;
+   }
+   .datetime-box {
+     background: rgba(15, 23, 42, 0.7);
+     backdrop-filter: blur(12px);
+     border: 1px solid rgba(255, 255, 255, 0.1);
+     padding: 12px 20px;
+     border-radius: 12px;
+     font-weight: 600;
+     color: #38bdf8;
+     font-size: 0.9rem;
+     white-space: nowrap;
+     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+   }
+   .section-title {
+     font-size: 1.25rem;
+     font-weight: 600;
+     color: #f8fafc;
+     letter-spacing: 0.5px;
+     margin-bottom: 16px;
+     display: flex;
+     align-items: center;
+     gap: 10px;
+   }
+   .section-title::before {
+     content: '';
+     display: inline-block;
+     width: 8px;
+     height: 18px;
+     background: #38bdf8;
+     border-radius: 4px;
+   }
+   .dashboard-container {
+     display: flex;
+     flex-direction: column;
+     gap: 36px;
+     width: 100%;
+     max-width: 1400px;
+     margin: 0 auto;
+   }
+   .modules-grid {
+     display: grid;
+     grid-template-columns: repeat(4, 1fr);
+     gap: 20px;
+     width: 100%;
+   }
+   .module-card {
+     background: rgba(255, 255, 255, 0.03);
+     backdrop-filter: blur(16px);
+     border: 1px solid rgba(255, 255, 255, 0.08);
+     border-radius: 16px;
+     padding: 24px;
+     min-height: 240px;
+     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+     display: flex;
+     flex-direction: column;
+   }
+   .module-card:hover {
+     transform: translateY(-4px);
+     border-color: rgba(56, 189, 248, 0.4);
+     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+   }
+   .module-card-title {
+     font-size: 1.05rem;
+     font-weight: 600;
+     color: #93c5fd;
+     padding-bottom: 12px;
+     margin-bottom: 16px;
+     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+   }
+   /* 5'li Borç Sorgulama (Logo) Grid Yapısı */
+   .companies-grid {
+     display: grid;
+     grid-template-columns: repeat(5, 1fr);
+     gap: 20px;
+     width: 100%;
+   }
+   .company-card {
+     background: rgba(255, 255, 255, 0.02);
+     backdrop-filter: blur(12px);
+     border: 1px solid rgba(255, 255, 255, 0.06);
+     border-radius: 14px;
+     height: 90px;
+     padding: 16px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     text-decoration: none;
+     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+   }
+   .company-card:hover {
+     background: rgba(255, 255, 255, 0.06);
+     border-color: rgba(56, 189, 248, 0.3);
+     transform: translateY(-2px);
+     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+   }
+   .company-card img {
+     max-width: 85%;
+     max-height: 85%;
+     object-fit: contain;
+     filter: brightness(0.9) grayscale(0.1);
+     transition: filter 0.2s ease;
+   }
+   .company-card:hover img {
+     filter: brightness(1) grayscale(0);
+   }
 </style>
 </head>
 <body>
-<h1>Sisteme Hoş Geldiniz</h1>
-<p>Rolünüz: <strong id="role-display">...</strong></p>
-<button onclick="logout()">Çıkış Yap</button>
-<hr>
-<!-- Herkesin görebildiği modül -->
-<div class="module user-only">
-<h3>Modül 1: Ortak Kullanıcı Alanı</h3>
-<p>Bu modülü hem Admin hem de Normal User görebilir.</p>
+<header class="top-header">
+<div class="announcement-box">
+<strong>Duyuru:</strong> Sistem güncellemeleri yönetici paneli üzerinden aktif edilmiştir.
 </div>
-<!-- Sadece Adminlerin görebildiği modül -->
-<div id="admin-module" class="module admin-only hidden">
-<h3>Modül 2: Özel Admin Paneli</h3>
-<p>Bu modülü YALNIZCA Admin şifresiyle girenler görebilir.</p>
+<div class="datetime-box">
+     31 Ağustos 2026 | 14:52
 </div>
-<script>
- // Giriş yapılmış mı kontrol et
- const userRole = sessionStorage.getItem('user_role');
- if (!userRole) {
-   // Giriş yapılmadıysa hemen login sayfasına at
-   window.location.href = 'index.html';
- } else {
-   document.getElementById('role-display').innerText = userRole.toUpperCase();
-   // Eğer yetkisi Admin ise gizli olan admin modülünü göster
-   if (userRole === 'admin') {
-     document.getElementById('admin-module').classList.remove('hidden');
-   }
- }
- function logout() {
-   sessionStorage.clear();
-   window.location.href = 'index.html';
- }
-</script>
+</header>
+<div class="dashboard-container">
+<section>
+<h2 class="section-title">Modüller</h2>
+<div class="modules-grid">
+<div class="module-card">
+<div class="module-card-title">Gecikme Bedeli Hesaplama</div>
+</div>
+<div class="module-card">
+<div class="module-card-title">Kademeli Tarife Hesaplama</div>
+</div>
+<div class="module-card">
+<div class="module-card-title">Modül 3</div>
+</div>
+<div class="module-card">
+<div class="module-card-title">Modül 4</div>
+</div>
+</div>
+</section>
+<section>
+<h2 class="section-title">Borç Sorgulama</h2>
+<div class="companies-grid">
+<a href="#" target="_blank" class="company-card">
+<img src="logo1.png" alt="Şirket 1">
+</a>
+<a href="#" target="_blank" class="company-card">
+<img src="logo2.png" alt="Şirket 2">
+</a>
+<a href="#" target="_blank" class="company-card">
+<img src="logo3.png" alt="Şirket 3">
+</a>
+<a href="#" target="_blank" class="company-card">
+<img src="logo4.png" alt="Şirket 4">
+</a>
+<a href="#" target="_blank" class="company-card">
+<img src="logo5.png" alt="Şirket 5">
+</a>
+</div>
+</section>
+</div>
 </body>
 </html>
