@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Kontrol Paneli</title>
+<style>
+   body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+   .module { background: white; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; }
+   .admin-only { border-left: 5px solid red; }
+   .user-only { border-left: 5px solid green; }
+   .hidden { display: none; }
+   button { padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>Sisteme Hoş Geldiniz</h1>
+<p>Rolünüz: <strong id="role-display">...</strong></p>
+<button onclick="logout()">Çıkış Yap</button>
+<hr>
+<!-- Herkesin görebildiği modül -->
+<div class="module user-only">
+<h3>Modül 1: Ortak Kullanıcı Alanı</h3>
+<p>Bu modülü hem Admin hem de Normal User görebilir.</p>
+</div>
+<!-- Sadece Adminlerin görebildiği modül -->
+<div id="admin-module" class="module admin-only hidden">
+<h3>Modül 2: Özel Admin Paneli</h3>
+<p>Bu modülü YALNIZCA Admin şifresiyle girenler görebilir.</p>
+</div>
+<script>
+ // Giriş yapılmış mı kontrol et
+ const userRole = sessionStorage.getItem('user_role');
+ if (!userRole) {
+   // Giriş yapılmadıysa hemen login sayfasına at
+   window.location.href = 'index.html';
+ } else {
+   document.getElementById('role-display').innerText = userRole.toUpperCase();
+   // Eğer yetkisi Admin ise gizli olan admin modülünü göster
+   if (userRole === 'admin') {
+     document.getElementById('admin-module').classList.remove('hidden');
+   }
+ }
+ function logout() {
+   sessionStorage.clear();
+   window.location.href = 'index.html';
+ }
+</script>
+</body>
+</html>
