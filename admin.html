@@ -239,5 +239,42 @@
      }
    }
 </script>
+  <!-- Supabase Bağlantı Kütüphanesi -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+ // 1. SUPABASE BİLGİLERİNİZİ BURAYA YAZIN
+ const SUPABASE_URL = 'https://xxxx.supabase.co'; // Supabase Project URL
+ const SUPABASE_KEY = 'eyJhbGciOi...';            // Supabase anon public key
+ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+ // 2. FORMU VE VERİLERİ KAYDETME FONKSİYONU
+ document.addEventListener('DOMContentLoaded', () => {
+   // Kaydet butonunuzu bulur (Buton id'niz farklıysa 'kaydetBtn' kısmını değiştirin)
+   const kaydetButonu = document.getElementById('kaydetBtn') || document.querySelector('button[type="submit"]');
+   if (kaydetButonu) {
+     kaydetButonu.addEventListener('click', async (e) => {
+       e.preventDefault(); // 405 hatasına yol açan sayfa yenilemesini ve POST isteğini engeller
+       // Formdaki tüm girdileri (input, select vb.) otomatik toplayan obje
+       const formData = {};
+       const inputs = document.querySelectorAll('input, select, textarea');
+       inputs.forEach(input => {
+         if (input.name || input.id) {
+           const key = input.name || input.id;
+           formData[key] = input.value;
+         }
+       });
+       // Supabase'deki 'settings' tablosuna tek hamlede gönderir
+       const { data, error } = await _supabase
+         .from('settings')
+         .insert([formData]);
+       if (error) {
+         console.error('Supabase Hata Detayı:', error);
+         alert('Kaydedilirken hata oluştu: ' + error.message);
+       } else {
+         alert('Tüm veriler başarıyla kaydedildi!');
+       }
+     });
+   }
+ });
+</script>
 </body>
 </html>
