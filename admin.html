@@ -1,0 +1,32 @@
+<script>
+   const API_URL = '/api/settings';
+   async function saveSettings(e) {
+     e.preventDefault();
+     const payload = {
+       announcement: document.getElementById('announcementText').value,
+       companies: [
+         { logo: document.getElementById('logo1').value, link: document.getElementById('link1').value },
+         { logo: document.getElementById('logo2').value, link: document.getElementById('link2').value },
+         { logo: document.getElementById('logo3').value, link: document.getElementById('link3').value },
+         { logo: document.getElementById('logo4').value, link: document.getElementById('link4').value },
+         { logo: document.getElementById('logo5').value, link: document.getElementById('link5').value }
+       ]
+     };
+     try {
+       const response = await fetch(API_URL, {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(payload)
+       });
+       if (response.ok) {
+         alert("OK");
+       }
+     } catch (error) {
+       console.error(error);
+     }
+   }
+</script>
+</body>
+</html>
