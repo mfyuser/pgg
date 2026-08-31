@@ -60,5 +60,246 @@
      kaydetBtn.disabled = false;
    });
 </script>
+     <!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Yönetim Paneli</title>
+<style>
+   * {
+     box-sizing: border-box;
+     margin: 0;
+     padding: 0;
+     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+   }
+   body {
+     background: linear-gradient(135deg, #0b132b 0%, #1c2541 100%);
+     color: #f1f5f9;
+     min-height: 100vh;
+     padding: 32px;
+     display: flex;
+     justify-content: center;
+   }
+   .admin-container {
+     width: 100%;
+     max-width: 1000px;
+     display: flex;
+     flex-direction: column;
+     gap: 32px;
+   }
+   .admin-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     padding-bottom: 16px;
+     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+   }
+   .admin-header h1 {
+     font-size: 1.6rem;
+     font-weight: 600;
+     color: #38bdf8;
+   }
+   .admin-card {
+     background: rgba(255, 255, 255, 0.03);
+     backdrop-filter: blur(16px);
+     border: 1px solid rgba(255, 255, 255, 0.08);
+     border-radius: 16px;
+     padding: 24px;
+     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+   }
+   .card-title {
+     font-size: 1.2rem;
+     font-weight: 600;
+     color: #f8fafc;
+     margin-bottom: 20px;
+     display: flex;
+     align-items: center;
+     gap: 10px;
+   }
+   .card-title::before {
+     content: '';
+     display: inline-block;
+     width: 6px;
+     height: 16px;
+     background: #38bdf8;
+     border-radius: 4px;
+   }
+   .form-group {
+     display: flex;
+     flex-direction: column;
+     gap: 8px;
+     margin-bottom: 16px;
+   }
+   label {
+     font-size: 0.85rem;
+     color: #94a3b8;
+     font-weight: 500;
+   }
+   input[type="text"], input[type="url"] {
+     background: rgba(15, 23, 42, 0.6);
+     border: 1px solid rgba(255, 255, 255, 0.12);
+     border-radius: 8px;
+     padding: 10px 14px;
+     color: #f8fafc;
+     font-size: 0.9rem;
+     outline: none;
+     transition: border-color 0.2s;
+   }
+   input[type="text"]:focus, input[type="url"]:focus {
+     border-color: #38bdf8;
+   }
+   .company-settings-list {
+     display: flex;
+     flex-direction: column;
+     gap: 16px;
+   }
+   .company-item {
+     background: rgba(15, 23, 42, 0.4);
+     border: 1px solid rgba(255, 255, 255, 0.06);
+     border-radius: 12px;
+     padding: 16px;
+     display: grid;
+     grid-template-columns: 80px 1fr 1fr;
+     gap: 16px;
+     align-items: center;
+   }
+   .company-badge {
+     font-weight: 600;
+     color: #93c5fd;
+     font-size: 0.9rem;
+     text-align: center;
+     background: rgba(56, 189, 248, 0.1);
+     padding: 8px;
+     border-radius: 8px;
+     border: 1px solid rgba(56, 189, 248, 0.2);
+   }
+   .btn-save {
+     background: #38bdf8;
+     color: #0f172a;
+     border: none;
+     border-radius: 10px;
+     padding: 12px 24px;
+     font-weight: 600;
+     font-size: 0.95rem;
+     cursor: pointer;
+     transition: all 0.2s ease;
+     align-self: flex-end;
+     margin-top: 10px;
+   }
+   .btn-save:hover {
+     background: #7dd3fc;
+     transform: translateY(-1px);
+     box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);
+   }
+</style>
+</head>
+<body>
+<div class="admin-container">
+<header class="admin-header">
+<h1>Yönetim Paneli</h1>
+</header>
+<form id="adminForm" onsubmit="saveSettings(event)">
+<section class="admin-card" style="margin-bottom: 24px;">
+<h2 class="card-title">Duyuru Yönetimi</h2>
+<div class="form-group">
+<label for="announcementText">Duyuru Metni</label>
+<input type="text" id="announcementText" required>
+</div>
+</section>
+<section class="admin-card">
+<h2 class="card-title">Borç Sorgulama Şirket Yönetimi</h2>
+<div class="company-settings-list">
+<div class="company-item">
+<div class="company-badge">1. Şirket</div>
+<div class="form-group" style="margin: 0;">
+<label>Logo Yolu / URL</label>
+<input type="text" id="logo1" required>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>Link</label>
+<input type="url" id="link1" required>
+</div>
+</div>
+<div class="company-item">
+<div class="company-badge">2. Şirket</div>
+<div class="form-group" style="margin: 0;">
+<label>Logo Yolu / URL</label>
+<input type="text" id="logo2" required>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>Link</label>
+<input type="url" id="link2" required>
+</div>
+</div>
+<div class="company-item">
+<div class="company-badge">3. Şirket</div>
+<div class="form-group" style="margin: 0;">
+<label>Logo Yolu / URL</label>
+<input type="text" id="logo3" required>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>Link</label>
+<input type="url" id="link3" required>
+</div>
+</div>
+<div class="company-item">
+<div class="company-badge">4. Şirket</div>
+<div class="form-group" style="margin: 0;">
+<label>Logo Yolu / URL</label>
+<input type="text" id="logo4" required>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>Link</label>
+<input type="url" id="link4" required>
+</div>
+</div>
+<div class="company-item">
+<div class="company-badge">5. Şirket</div>
+<div class="form-group" style="margin: 0;">
+<label>Logo Yolu / URL</label>
+<input type="text" id="logo5" required>
+</div>
+<div class="form-group" style="margin: 0;">
+<label>Link</label>
+<input type="url" id="link5" required>
+</div>
+</div>
+</div>
+<div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+<button type="submit" class="btn-save">Değişiklikleri Kaydet</button>
+</div>
+</section>
+</form>
+</div>
+<script>
+   const API_URL = '/api/settings';
+   async function saveSettings(e) {
+     e.preventDefault();
+     const payload = {
+       announcement: document.getElementById('announcementText').value,
+       companies: [
+         { logo: document.getElementById('logo1').value, link: document.getElementById('link1').value },
+         { logo: document.getElementById('logo2').value, link: document.getElementById('link2').value },
+         { logo: document.getElementById('logo3').value, link: document.getElementById('link3').value },
+         { logo: document.getElementById('logo4').value, link: document.getElementById('link4').value },
+         { logo: document.getElementById('logo5').value, link: document.getElementById('link5').value }
+       ]
+     };
+     try {
+       const response = await fetch(API_URL, {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(payload)
+       });
+       if (response.ok) {
+         alert("OK");
+       }
+     } catch (error) {
+       console.error(error);
+     }
+   }
+</script>
 </body>
 </html>
