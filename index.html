@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Giriş Yap</title>
-<!-- Supabase Kütüphanesi -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
    body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f9; }
@@ -22,7 +21,6 @@
 <p id="error-msg"></p>
 </div>
 <script>
- // SUPABASE BİLGİLERİNİ BURAYA YAZ
  const SUPABASE_URL = 'https://pulueyocgazlsydkfetk.supabase.co';
  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bHVleW9jZ2F6bHN5ZGtmZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxNzIxOTAsImV4cCI6MjEwMzc0ODE5MH0.WesR5VqpncPUeJ_3fMy1UCYB-acfIdn7utLigLZstZ0';
  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -34,12 +32,10 @@
      errorMsg.innerText = 'Lütfen bir şifre girin.';
      return;
    }
-   // Supabase SQL fonksiyonunu çağırıyoruz
    const { data: role, error } = await supabaseClient.rpc('check_password', { pass_input: inputVal });
    if (error || !role) {
      errorMsg.innerText = 'Hatalı şifre!';
    } else {
-     // Şifre doğruysa rolü tarayıcı hafızasına kaydet ve yönlendir
      sessionStorage.setItem('user_role', role);
      window.location.href = 'dashboard.html';
    }
