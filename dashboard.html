@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>PGG KOLAY ERİŞİM</title>
+<title>Dashboard</title>
 <style>
    * {
      box-sizing: border-box;
@@ -36,16 +36,18 @@
      font-size: 0.95rem;
      flex: 1;
    }
-.datetime-box {
-  background: #ffffff;
-  border: 1px solid #dbe4ee;
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-weight: 600;
-  color: #0078d4;
-  white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
+   .datetime-box {
+     background: rgba(15, 23, 42, 0.7);
+     backdrop-filter: blur(12px);
+     border: 1px solid rgba(255, 255, 255, 0.1);
+     padding: 12px 20px;
+     border-radius: 12px;
+     font-weight: 600;
+     color: #38bdf8;
+     font-size: 0.9rem;
+     white-space: nowrap;
+     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+   }
    .section-title {
      font-size: 1.25rem;
      font-weight: 600;
@@ -84,7 +86,7 @@
      border: 1px solid rgba(255, 255, 255, 0.08);
      border-radius: 16px;
      padding: 24px;
-     min-height: 130px;
+     min-height: 240px;
      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
      display: flex;
      flex-direction: column;
@@ -128,14 +130,13 @@
      transform: translateY(-2px);
      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
    }
-.company-card img {
-    max-width: 100%;
-    max-height: 60px;
-    object-fit: contain;
-    filter: brightness(0.9) grayscale(0.1);
-    transition: filter 0.2s ease;
-}
-}
+   .company-card img {
+     max-width: 85%;
+     max-height: 85%;
+     object-fit: contain;
+     filter: brightness(0.9) grayscale(0.1);
+     transition: filter 0.2s ease;
+   }
    .company-card:hover img {
      filter: brightness(1) grayscale(0);
    }
@@ -146,27 +147,17 @@
 <div class="announcement-box">
 <strong>•</strong> İyi Günler..
 </div>
-<div class="datetime-box" id="datetime"></div>
+<div class="datetime-box">
+     31 Ağustos 2026 | 14:52
+</div>
 </header>
 <div class="dashboard-container">
 <section>
 <h2 class="section-title">Modüller</h2>
 <div class="modules-grid">
-<a href="https://mfyuser.github.io/pgg/gecikmefaiziv1.html" target="_blankcard-title">
-        Gecikme Bedeli Hesaplama
-    </div>
-
-    <img
-        src="https://www.hasimkartal.av.tr/wp-content/uploads/2021/05/ADLI-PARA-CEZA-PNG.png"
-        alt="Gecikme Bedeli"
-        style="
-            width:50px;
-            height:50px;
-            object-fit:contain;
-            margin:auto;
-        ">
-
-</a>
+<div class="module-card">
+<div class="module-card-title">Gecikme Bedeli Hesaplama</div>
+</div>
 <div class="module-card">
 <div class="module-card-title">Kademeli Tarife Hesaplama</div>
 </div>
@@ -244,29 +235,6 @@
        console.error(error);
      }
    });
-</script>
-<script>
-function updateDateTime() {
-    const now = new Date();
-
-    const date = now.toLocaleDateString('tr-TR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-    });
-
-    const time = now.toLocaleTimeString('tr-TR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-
-    document.getElementById('datetime').textContent =
-        `${date} | ${time}`;
-}
-
-updateDateTime();
-setInterval(updateDateTime, 1000);
 </script>
 </body>
 </html>
