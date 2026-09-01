@@ -1,0 +1,22 @@
+{
+  "announcement": "Bugün sistem bakım çalışması vardır.",
+
+  "modules": [
+    {
+      "title": "Gecikme Bedeli Hesaplama",
+      "url": "/gecikme"
+    },
+    {
+      "title": "Kademeli Tarife Hesaplama",
+      "url": "/kademeli"
+    }
+  ],
+
+  "companies": [
+    {
+      "name": "Başkentgaz",
+      "logo": "/logos/baskentgaz.png",
+      "link": "https://www.baskentgaz.com.tr"
+    }
+  ]
+}
