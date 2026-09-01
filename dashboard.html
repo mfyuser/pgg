@@ -153,9 +153,7 @@
 <div class="announcement-box">
 <strong>•</strong> İyi Günler..
 </div>
-<div class="datetime-box">
-     31 Ağustos 2026 | 14:52
-</div>
+<div class="datetime-box" id="datetime"></div>
 </header>
 <div class="dashboard-container">
 <section>
@@ -252,6 +250,29 @@ Gecikme Bedeli Hesaplama
        console.error(error);
      }
    });
+</script>
+  <script>
+function updateDateTime() {
+    const now = new Date();
+
+    const date = now.toLocaleDateString("tr-TR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    });
+
+    const time = now.toLocaleTimeString("tr-TR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+
+    document.getElementById("datetime").textContent =
+        `${date} | ${time}`;
+}
+
+updateDateTime();
+setInterval(updateDateTime, 1000);
 </script>
 </body>
 </html>
