@@ -5,6 +5,7 @@
 <title>Kademe</title>
 
 <!-- SheetJS (Excel import/export için) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
@@ -261,13 +262,13 @@ button {
 
 <script>
 
-const sb = window.supabase.createClient(
+const supabase = supabaseJs.createClient(
   "https://pulueyocgazlsydkfetk.supabase.co",
-  "ANON_KEY"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bHVleW9jZ2F6bHN5ZGtmZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxNzIxOTAsImV4cCI6MjEwMzc0ODE5MH0.WesR5VqpncPUeJ_3fMy1UCYB-acfIdn7utLigLZstZ0"
 );
 
 async function testSupabase() {
-    const { data, error } = await sb
+    const { data, error } = await supabase
         .from("fiyatlar")
         .select("*");
 
@@ -331,19 +332,18 @@ function setTheme(t){
     localStorage.setItem("theme",t);
 }
 
-window.onload=function(){
-    let t=localStorage.getItem("theme") || "default";
+window.onload = async function(){
+
+    let t = localStorage.getItem("theme") || "default";
     setTheme(t);
 
     fillCityList();
     ayPanel();
 
-    fillFiyatIl();
+    await loadFiyatlar();
 
-    testSupabase();
-
-document.getElementById("fiyatIl").addEventListener("change", fiyatTabloOlustur);
-
+    document.getElementById("fiyatIl")
+        .addEventListener("change", fiyatTabloOlustur);
 };
 
 /* ------------------------------ ŞEHİR LİSTESİ ------------------------------ */
