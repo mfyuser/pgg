@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Kademe</title>
+
+<!-- SheetJS (Excel import/export için) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+:root {
+    --theme-bg: #e9f0ff;
+    --theme-card: #ffffff;
+    --theme-border: #cdd7ff;
+    --theme-text: #003087;
+    --theme-accent: #2c5cff;
+}
+
+/* GRİ TEMA */
+.theme-gray {
+    --theme-bg: #f1f1f1;
+    --theme-card: #ffffff;
+    --theme-border: #cccccc;
+    --theme-text: #444444;
+    --theme-accent: #888888;
+}
+
+body {
+    font-family: Arial;
+    background: var(--theme-bg);
+    color: var(--theme-text);
+    padding: 20px;
+    transition: 0.3s;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 32px;
+    color: var(--theme-text);
+}
+
+.header .mail {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.settings-btn {
+    position: fixed;
+    left: 10px;
+    top: 120px;
+    background: var(--theme-accent);
+    color: white;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.settings-panel {
+    position: fixed;
+    left: -300px;
+    top: 0;
+    width: 260px;
+    height: 100%;
+    background: var(--theme-card);
+    border-right: 3px solid var(--theme-border);
+    padding: 20px;
+    transition: 0.4s;
+    box-shadow: 4px 0px 8px rgba(0,0,0,0.15);
+}
+
+.settings-panel.open {
+    left: 0;
+}
+
+.settings-panel h3 {
+    margin-top: 0;
+}
+
+.theme-box {
+    padding: 8px;
+    margin: 5px 0;
+    cursor: pointer;
+    border: 1px solid var(--theme-border);
+    border-radius: 6px;
+}
+
+.main {
+    display: flex;
+    gap: 20px;
+    max-width: 1500px;
+    margin: auto;
+}
+
+.left, .right {
+    background: var(--theme-card);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--theme-border);
+}
+
+.left { flex: 2; }
+.right { flex: 1; }
+
+label { display: block; margin-top: 10px; }
+input, select { width: 100%; padding: 6px; }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 15px;
+}
+
+th, td {
+    border: 1px solid var(--theme-border);
+    padding: 6px;
+    text-align: center;
+}
+
+.red {
+    background: #ffe5e5 !important;
+    color: #a40000 !important;
+}
+
+.month-box {
+    border: 1px solid var(--theme-border);
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    background: var(--theme-bg);
+    font-size: 14px;
+}
+
+.month-box.active {
+    background: var(--theme-accent) !important;
+    color: white;
+    font-weight: bold;
+}
+
+textarea {
+    width: 100%;
+    height: 130px;
+    margin-top: 10px;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    background: var(--theme-accent);
+    border: none;
+    color: white;
+    border-radius: 5px;
+}
+
+.highlight-limit {
+    font-weight: bold;
+    color: #a40000;
+}
+
+.highlight-ok {
+    font-weight: bold;
+    color: #2c5cff;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>Kademe</h1>
+  <div class="mail">f.yildiz@palmet.com</div>
+</div>
+
+<div class="settings-btn" onclick="toggleSettings()">⚙️ Ayarlar</div>
+
+<!-- AYARLAR PANELİ -->
+<div id="settingsPanel" class="settings-panel">
+<div onclick="toggleSettings()" style="cursor:pointer; font-weight:bold; margin-bottom:10px;">
+✖ Kapat
+</div>
+  <h4>Tema</h4>
+  <div class="theme-box" onclick="setTheme('default')">🔵 Mavi (varsayılan)</div>
+  <div class="theme-box" onclick="setTheme('theme-gray')">⚪ Gri</div>
+
+  <hr>
+
+  <hr>
+
+  <h4>Birim Fiyat Tanımlama</h4>
+
+  <select id="fiyatIl"></select>
+
+  <div id="fiyatTablo"></div>
+
+  <button onclick="kaydetFiyatlar()">💾 Kaydet</button>
+<button onclick="exportFiyatExcel()">📤 Fiyatları Excel’e Aktar</button>
+
+<input type="file" id="fiyatExcelInput" 
+       accept=".xlsx"
+       onchange="importFiyatExcel()" 
+       style="margin-top:10px;">
+
+
+</div>
+
+<div class="main">
+
+<!-- SOL PANEL -->
+<div class="left">
+<h2>Kademe Hesaplama</h2>
+
+<label>Kullanım Tipi</label>
+<select id="kullanim">
+  <option value="bireysel">Bireysel</option>
+  <option value="merkezi">Merkezi</option>
+</select>
+
+<label>Daire Sayısı (Bireysel ise 1 olacak, merkezi ise daire sayısını giriniz)</label>
+<input type="number" id="daire" value="1">
+
+<label>İl</label>
+<select id="il" onchange="ayPanel()"></select>
+
+<label>İlk Okuma Tarihi</label>
+<input type="date" id="ilkT">
+
+<label>Son Okuma Tarihi</label>
+<input type="date" id="sonT">
+
+<label>Tüketim Miktarı (kcal)</label>
+<input type="number" id="toplamKcal" placeholder="Örn: 1616,191">
+
+<button onclick="hesapla()">HESAPLA</button>
+
+<div id="sonuc"></div>
+
+<label>Bilgilendirme Notu</label>
+<textarea id="not"></textarea>
+</div>
+
+<!-- SAĞ PANEL -->
+<div class="right">
+<h3>İl Bazlı Aylık Kademe Detayları</h3>
+<div id="ayPanel"></div>
+</div>
+
+</div>
+
+<script>
+/* ------------------------------ VERİLER ------------------------------ */
+const DECIMAL = 3; // ONDALIK HASSASİYET
+
+let cityData = {
+"GAZİANTEP":[322.46,382.62,408.17,201.02,63.4,32.41,22.19,20.9,21.14,28.32,96.27,258.65],
+"KİLİS":[279.83,401.12,376.99,214.39,55.14,28.19,19.2,19.23,18.95,21.53,59.8,211.12],
+"KOCAELİ":[270.62,301.53,272.9,213.68,127.26,47.15,32.67,26.36,27.34,41.04,102.85,200.57],
+"KIRKLARELİ":[280.18,268.85,341.29,183.89,101.62,38.31,20.39,18.6,19.02,39.88,114.22,195.23],
+"EDİRNE":[291.88,278.88,316,181.53,100.43,36.17,19.81,16.8,17.61,41.9,116.24,187.79],
+"TEKİRDAĞ":[253,256.31,284.32,179.25,108.89,36.14,25.08,24.12,23.24,35.11,90.48,175.26],
+"ERZURUM":[420.4,410.06,358.73,262.97,154.02,63.3,40.65,33.57,34.42,62.83,190.61,319.6]
+};
+
+const gunlukLimit = {
+"GAZİANTEP":[10.4,13.67,13.17,6.7,2.05,1.08,0.72,0.67,0.7,0.91,3.21,8.34],
+"KİLİS":[9.03,14.33,12.16,7.15,1.78,0.94,0.62,0.62,0.63,0.69,1.99,6.81],
+"KOCAELİ":[8.73,10.77,8.8,7.12,4.11,1.57,1.05,0.85,0.91,1.32,3.43,6.47],
+"KIRKLARELİ":[9.04,9.6,11.01,6.13,3.28,1.28,0.66,0.6,0.63,1.29,3.81,6.3],
+"EDİRNE":[9.42,9.96,10.19,6.05,3.24,1.21,0.64,0.54,0.59,1.35,3.87,6.06],
+"TEKİRDAĞ":[8.16,9.15,9.17,5.98,3.51,1.2,0.81,0.78,0.77,1.13,3.02,5.65],
+"ERZURUM":[13.56,14.65,11.57,8.77,4.97,2.11,1.31,1.08,1.15,2.03,6.35,10.31]
+};
+
+let fiyatData = JSON.parse(localStorage.getItem("fiyatData")) || {
+"GAZİANTEP": [
+ {k1:5, k2:8}, {k1:5, k2:8}, {k1:5, k2:8},
+ {k1:5, k2:8}, {k1:5, k2:8}, {k1:5, k2:8},
+ {k1:5, k2:8}, {k1:5, k2:8}, {k1:5, k2:8},
+ {k1:5, k2:8}, {k1:5, k2:8}, {k1:5, k2:8}
+]
+};
+
+const ayAd=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const ayGun=[31,28,31,30,31,30,31,31,30,31,30,31];
+
+/* ------------------------------ AYARLAR PANELİ ------------------------------ */
+function toggleSettings(){
+    const panel = document.getElementById("settingsPanel");
+    panel.classList.toggle("open");
+}
+
+
+/* ------------------------------ TEMA SİSTEMİ ------------------------------ */
+function setTheme(t){
+    document.body.className="";
+    if(t!=="default") document.body.classList.add(t);
+    localStorage.setItem("theme",t);
+}
+
+window.onload=function(){
+    let t=localStorage.getItem("theme") || "default";
+    setTheme(t);
+
+    fillCityList();
+    ayPanel();
+
+    fillFiyatIl();
+
+document.getElementById("fiyatIl").addEventListener("change", fiyatTabloOlustur);
+
+};
+
+/* ------------------------------ ŞEHİR LİSTESİ ------------------------------ */
+function fillCityList(){
+    let s=document.getElementById("il");
+    s.innerHTML="";
+    Object.keys(cityData).forEach(il=>{
+        s.innerHTML+=`<option>${il}</option>`;
+    });
+}
+
+function fillFiyatIl(){
+    let s=document.getElementById("fiyatIl");
+    s.innerHTML="";
+    Object.keys(cityData).forEach(il=>{
+        s.innerHTML+=`<option>${il}</option>`;
+    });
+
+    fiyatTabloOlustur();
+}
+
+function fiyatTabloOlustur(){
+    let il=document.getElementById("fiyatIl").value;
+
+    if(!fiyatData[il]){
+        fiyatData[il]=Array(12).fill().map(()=>({k1:0,k2:0}));
+    }
+
+    let html = `<table>
+    <tr><th>Ay</th><th>1. Kademe</th><th>2. Kademe</th></tr>`;
+
+    for(let i=0;i<12;i++){
+        html+=`
+        <tr>
+            <td>${ayAd[i]}</td>
+            <td><input type="number" step="0.01" id="k1_${i}" value="${fiyatData[il][i].k1}"></td>
+            <td><input type="number" step="0.01" id="k2_${i}" value="${fiyatData[il][i].k2}"></td>
+        </tr>`;
+    }
+
+    html+=`</table>`;
+
+    document.getElementById("fiyatTablo").innerHTML=html;
+}
+
+function kaydetFiyatlar(){
+    let il=document.getElementById("fiyatIl").value;
+
+    fiyatData[il]=[];
+
+    for(let i=0;i<12;i++){
+        fiyatData[il][i]={
+            k1: Number(document.getElementById(`k1_${i}`).value),
+            k2: Number(document.getElementById(`k2_${i}`).value)
+        };
+    }
+
+    localStorage.setItem("fiyatData", JSON.stringify(fiyatData));
+    alert("Fiyatlar kaydedildi ✅");
+}
+
+function exportFiyatExcel(){
+    let rows = [["İL","AY","1_KADEME","2_KADEME"]];
+
+    for(let il in fiyatData){
+        for(let ay=0; ay<12; ay++){
+            rows.push([
+                il,
+                ayAd[ay],
+                fiyatData[il][ay].k1,
+                fiyatData[il][ay].k2
+            ]);
+        }
+    }
+
+    let wb = XLSX.utils.book_new();
+    let ws = XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, "Fiyatlar");
+    XLSX.writeFile(wb, "Birim_Fiyatlar.xlsx");
+}
+function importFiyatExcel(){
+    let file = document.getElementById("fiyatExcelInput").files[0];
+    if(!file) return;
+
+    let reader = new FileReader();
+
+    reader.onload = function(e){
+        let data = new Uint8Array(e.target.result);
+        let wb = XLSX.read(data, {type:"array"});
+        let ws = wb.Sheets["Fiyatlar"];
+        let rows = XLSX.utils.sheet_to_json(ws, {header:1});
+
+        let yeniFiyatData = {};
+
+        for(let i=1; i<rows.length; i++){
+            let [il, ay, k1, k2] = rows[i];
+            if(!yeniFiyatData[il]){
+                yeniFiyatData[il] = Array(12).fill().map(()=>({k1:0,k2:0}));
+            }
+            let ayIndex = ayAd.indexOf(ay);
+            if(ayIndex > -1){
+                yeniFiyatData[il][ayIndex] = {
+                    k1: Number(k1),
+                    k2: Number(k2)
+                };
+            }
+        }
+
+        fiyatData = yeniFiyatData;
+        localStorage.setItem("fiyatData", JSON.stringify(fiyatData));
+        fillFiyatIl();
+        alert("Fiyatlar Excel’den yüklendi ✅");
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+
+/* ------------------------------ AY PANELİ ------------------------------ */
+function ayPanel(active=[]){
+    let il=document.getElementById("il").value;
+    let h="";
+    for(let i=0;i<12;i++){
+        h+=`
+        <div class="month-box ${active.includes(i)?"active":""}">
+            <b>${ayAd[i]}</b><br>
+            Gün Sayısı: ${ayGun[i]}<br>
+            Aylık Kademe: ${cityData[il][i]} m³<br>
+            Günlük Limit: ${gunlukLimit[il][i]}
+        </div>`;
+    }
+    document.getElementById("ayPanel").innerHTML=h;
+}
+
+/* ------------------------------ HESAPLAMA ------------------------------ */
+function hesapla(){
+ let kullanim = document.getElementById("kullanim").value;
+ let il=document.getElementById("il").value;
+ let ilkT=new Date(document.getElementById("ilkT").value);
+ let sonT=new Date(document.getElementById("sonT").value);
+
+ if(!ilkT || !sonT){
+     alert("Tarih giriniz.");
+     return;
+ }
+
+ sonT.setDate(sonT.getDate()-1);
+
+ let toplamKcal = Number(document.getElementById("toplamKcal").value);
+
+if (isNaN(toplamKcal) || toplamKcal <= 0) {
+    alert("Lütfen geçerli bir tüketim miktarı (kcal) giriniz.");
+    return;
+}
+
+// SABİT DÖNÜŞÜM KATSAYISI
+const KATSAYI = 10.64;
+
+// kcal → sm³ dönüşümü
+let toplamTuk = toplamKcal / KATSAYI; // DÜZELTİLMİŞ TÜKETİM (sm³)
+let daire = Number(document.getElementById("daire").value);
+
+if (isNaN(daire) || daire <= 0) {
+    alert("Geçerli bir daire sayısı giriniz.");
+    return;
+}
+
+// Merkezide daireye böl, bireyselde zaten 1 olacak
+toplamTuk = toplamTuk / daire;
+
+ if (isNaN(toplamTuk) || toplamTuk <= 0) {
+    alert("Lütfen geçerli bir toplam tüketim giriniz.");
+    return;
+ }
+
+ let toplamGun=(sonT-ilkT)/86400000 + 1
+ let gunluk=toplamTuk/toplamGun;
+
+ let cursor=new Date(ilkT);
+ let aktifAy=[];
+ let kademeList=[];
+
+ let toplamTutar = 0;
+ let html=`
+ <p><b>Toplam Gün:</b> ${toplamGun.toFixed(0)}</p>
+ <p><b>Düzeltilmiş Tüketim (sm³):</b> ${toplamTuk.toFixed(DECIMAL)}</p>
+ <p><b>Günlük Ortalama (sm³):</b> ${gunluk.toFixed(DECIMAL)}</p>
+ <table>
+ <tr><th>Ay</th><th>Gün</th><th>Aylık Kullanım</th><th>Günlük Ortalama Kullanım</th><th>Günlük Kademe Limiti</th><th>Kademe</th></tr>Fatura (TL)</th></tr>
+ `;
+
+ while(cursor <= sonT){
+    let ay=cursor.getMonth();
+    aktifAy.push(ay);
+
+    let yil=cursor.getFullYear();
+    let aySonGun=new Date(yil,ay+1,0);
+    let bitis=aySonGun < sonT ? aySonGun : sonT;
+
+    let g=(bitis.getDate() - cursor.getDate())+1;
+
+    let ayTuk=g*gunluk;
+    let limit=gunlukLimit[il][ay];
+    let ikinci=gunluk>limit;
+    
+// Fiyatları al
+let fiyat1 = (fiyatData[il] && fiyatData[il][ay]) ? fiyatData[il][ay].k1 : 0;
+let fiyat2 = (fiyatData[il] && fiyatData[il][ay]) ? fiyatData[il][ay].k2 : 0;
+
+let ayTutar = 0;
+
+if (ikinci) {
+    ayTutar = ayTuk * fiyat2;
+} else {
+    ayTutar = ayTuk * fiyat1;
+}
+
+toplamTutar += ayTutar;
+    kademeList.push(`${ayAd[ay]}: ${ikinci?"2. Kademe":"1. Kademe"}`);
+
+    html+=`
+    <tr class="${ikinci?"red":""}">
+      <td>${ayAd[ay]}</td>
+      <td>${g}</td>
+      <td>${ayTuk.toFixed(DECIMAL)}</td>
+      <td class="highlight-ok" title="Günlük ortalama tüketim">
+    ${gunluk.toFixed(DECIMAL)}
+</td>
+
+<td class="${ikinci ? 'highlight-limit' : 'highlight-ok'}"
+    title="${ikinci ? 'Limit aşılmış' : 'Limit altında'}">
+    ${limit.toFixed(DECIMAL)}
+</td>
+      <td>${ikinci?"2. KADEME":"1. KADEME"}</td>
+      <td>${ayTutar.toFixed(2)} TL</td>
+    </tr>`;
+
+    cursor=new Date(bitis);
+    cursor.setDate(cursor.getDate()+1);
+ }
+
+ html+="</table>";
+
+html+=`
+<div style="
+    margin-top:15px;
+    padding:10px;
+    border:2px solid var(--theme-accent);
+    border-radius:8px;
+    font-size:18px;
+    font-weight:bold;
+    text-align:center;
+    background: var(--theme-bg);
+">
+Toplam Tahmini Fatura: ${toplamTutar.toFixed(2)} TL
+</div>
+`;
+
+ document.getElementById("sonuc").innerHTML=html;
+
+ document.getElementById("not").value =
+`Veriler ${il} için hesaplanmıştır.
+Kullanım Tipi: ${kullanim === "merkezi" ? "Merkezi Sistem" : "Bireysel"}
+Daire Sayısı: ${daire}
+Toplam Tüketim: ${(toplamTuk * daire).toFixed(2)} m³
+Daire Başı Tüketim: ${toplamTuk.toFixed(2)} m³
+Günlük Ortalama: ${gunluk.toFixed(2)} m³
+Kademe Durumu:
+${kademeList.join("\n")}`;
++ `
+
+--------------------------------
+FATURA TAHMİNİ:
+
+Toplam: ${toplamTutar.toFixed(2)} TL
+`
+
+ ayPanel([...new Set(aktifAy)]);
+}
+
+
+document.addEventListener("click", function(e){
+    const panel = document.getElementById("settingsPanel");
+    const btn = document.querySelector(".settings-btn");
+
+    // Panel açıksa ve dışarı tıklandıysa kapat
+    if(panel.classList.contains("open")){
+        if(!panel.contains(e.target) && !btn.contains(e.target)){
+            panel.classList.remove("open");
+        }
+    }
+});
+
+</script>
+
+</body>
+</html>
