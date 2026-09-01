@@ -1,1 +1,200 @@
-<div id="hn-gecikme-zammi-widget"></div><script src="https://e.hesaplama.net/gecikme-zammi.do?bgcolor=FFFFFF&tcolor=000000&hcolor=008EEE&rcolor=008EEE&tsize=l&tfamily=tnr&btype=c&bsize=3px&bcolor=008EEE" type="text/javascript"></script>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gecikme Faizi Hesaplama</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: #f4f8fc;
+        margin: 0;
+        padding: 30px;
+    }
+
+    .container {
+        max-width: 700px;
+        margin: auto;
+    }
+
+    .card {
+        background: #ffffff;
+        border: 2px solid #0d6efd;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        margin-top: 0;
+        color: #0d6efd;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        color: #003f7f;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #b5c9e8;
+        border-radius: 6px;
+        font-size: 15px;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    button {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .btn-calc {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .btn-reset {
+        background: #dc3545;
+        color: white;
+    }
+
+    .result-item {
+        margin: 10px 0;
+        font-size: 17px;
+        color: #003f7f;
+    }
+
+    .highlight {
+        color: #0d6efd;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Gecikme Faizi Hesaplama</h2>
+
+        <div class="form-group">
+            <label>Borç Tutarı (TL)</label>
+            <input type="number" id="borc" step="0.01">
+        </div>
+
+        <div class="form-group">
+            <label>Son Ödeme Tarihi</label>
+            <input type="date" id="sonOdeme">
+        </div>
+
+        <div class="form-group">
+            <label>Tahsilat Tarihi</label>
+            <input type="date" id="tahsilat">
+        </div>
+
+        <div class="buttons">
+            <button class="btn-calc" onclick="hesapla()">Hesapla</button>
+            <button class="btn-reset" onclick="sifirla()">Sıfırla</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Sonuç</h2>
+
+        <div class="result-item">
+            Toplam Gecikme Günü :
+            <span class="highlight" id="gun">0 gün</span>
+        </div>
+
+        <div class="result-item">
+            Faiz Tutarı :
+            <span class="highlight" id="faiz">0,00 TL</span>
+        </div>
+
+        <div class="result-item">
+            KDV Dahil Toplam Gecikme Faizi :
+            <span class="highlight" id="toplam">0,00 TL</span>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function hesapla() {
+
+    const aylikFaiz = 3.7 / 100;
+    const kdvOrani = 20 / 100;
+
+    const borc = parseFloat(document.getElementById("borc").value);
+    const sonOdeme = new Date(document.getElementById("sonOdeme").value);
+    const tahsilat = new Date(document.getElementById("tahsilat").value);
+
+    if (!borc || isNaN(sonOdeme) || isNaN(tahsilat)) {
+        alert("Lütfen tüm alanları doldurunuz.");
+        return;
+    }
+
+    const farkMs = tahsilat - sonOdeme;
+    let gecikmeGun = Math.floor(farkMs / (1000 * 60 * 60 * 24));
+
+    if (gecikmeGun < 0) {
+        gecikmeGun = 0;
+    }
+
+    const gunlukFaiz = aylikFaiz / 30;
+    const faizTutari = borc * gunlukFaiz * gecikmeGun;
+    const kdvDahilToplam = faizTutari * (1 + kdvOrani);
+
+    document.getElementById("gun").innerText =
+        gecikmeGun + " gün";
+
+    document.getElementById("faiz").innerText =
+        faizTutari.toLocaleString('tr-TR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }) + " TL";
+
+    document.getElementById("toplam").innerText =
+        kdvDahilToplam.toLocaleString('tr-TR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }) + " TL";
+}
+
+function sifirla() {
+    document.getElementById("borc").value = "";
+    document.getElementById("sonOdeme").value = "";
+    document.getElementById("tahsilat").value = "";
+
+    document.getElementById("gun").innerText = "0 gün";
+    document.getElementById("faiz").innerText = "0,00 TL";
+    document.getElementById("toplam").innerText = "0,00 TL";
+}
+</script>
+
+</body>
+</html>
