@@ -258,8 +258,6 @@ button {
 
 </div>
 
-   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
-
 <script>
 
 const sb = supabaseJs.createClient(
@@ -282,6 +280,38 @@ async function testSupabase() {
 console.log("Supabase hazır");
 
 testSupabase();
+
+async function loadFiyatlar() {
+
+    const { data, error } = await sb
+        .from("fiyatlar")
+        .select("*");
+
+    if (error) {
+        console.error("Supabase hata:", error);
+        return;
+    }
+
+    fiyatData = {};
+
+    data.forEach(row => {
+
+        if (!fiyatData[row.il]) {
+            fiyatData[row.il] = Array(12)
+                .fill()
+                .map(() => ({ k1: 0, k2: 0 }));
+        }
+
+        fiyatData[row.il][row.ay - 1] = {
+            k1: Number(row.k1),
+            k2: Number(row.k2)
+        };
+    });
+
+    console.log("FİYAT DATA:", fiyatData);
+
+    fillFiyatIl();
+}
 
 /* ------------------------------ VERİLER ------------------------------ */
 const DECIMAL = 3; // ONDALIK HASSASİYET
