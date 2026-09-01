@@ -389,20 +389,28 @@ function fiyatTabloOlustur(){
     document.getElementById("fiyatTablo").innerHTML=html;
 }
 
-function kaydetFiyatlar(){
-    let il=document.getElementById("fiyatIl").value;
+async function kaydetFiyatlar(){
 
-    fiyatData[il]=[];
+    let il = document.getElementById("fiyatIl").value;
 
     for(let i=0;i<12;i++){
-        fiyatData[il][i]={
-            k1: Number(document.getElementById(`k1_${i}`).value),
-            k2: Number(document.getElementById(`k2_${i}`).value)
-        };
+
+        const { error } = await supabase
+            .from("fiyatlar")
+            .upsert({
+                il: il,
+                ay: i + 1,
+                k1: Number(document.getElementById(`k1_${i}`).value),
+                k2: Number(document.getElementById(`k2_${i}`).value)
+            });
+
+        if(error){
+            console.error(error);
+        }
+
     }
 
-    localStorage.setItem("fiyatData", JSON.stringify(fiyatData));
-    alert("Fiyatlar kaydedildi ✅");
+    alert("Supabase'e kaydedildi ✅");
 }
 
 function exportFiyatExcel(){
