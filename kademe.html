@@ -6,8 +6,7 @@
 
 <!-- SheetJS (Excel import/export için) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    
+
 <style>
 :root {
     --theme-bg: #e9f0ff;
@@ -181,7 +180,7 @@ button {
 
 <div class="header">
   <h1>Kademe</h1>
-  <div class="mail">V2</div>
+  <div class="mail">v2div>
 </div>
 
 <div class="settings-btn" onclick="toggleSettings()">⚙️ Ayarlar</div>
@@ -193,7 +192,6 @@ button {
 </div>
   <h4>Tema</h4>
   <div class="theme-box" onclick="setTheme('default')">🔵 Mavi (varsayılan)</div>
-  <div class="theme-box" onclick="setTheme('theme-gray')">⚪ Gri</div>
 
   <hr>
 
@@ -259,24 +257,28 @@ button {
 
 </div>
 
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+
 <script>
-    const supabase = window.supabase.createClient(
-    "https://pulueyocgazlsydkfetk.supabase.co",
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bHVleW9jZ2F6bHN5ZGtmZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxNzIxOTAsImV4cCI6MjEwMzc0ODE5MH0.WesR5VqpncPUeJ_3fMy1UCYB-acfIdn7utLigLZstZ0"
+
+const supabase = window.supabase.createClient(
+  "https://pulueyocgazlsydkfetk.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bHVleW9jZ2F6bHN5ZGtmZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxNzIxOTAsImV4cCI6MjEwMzc0ODE5MH0.WesR5VqpncPUeJ_3fMy1UCYB-acfIdn7utLigLZstZ0"
 );
-
     async function testSupabase() {
-
     const { data, error } = await supabase
         .from("fiyatlar")
         .select("*");
 
     console.log("VERİLER:", data);
 
-    if(error){
+    if (error) {
         console.error(error);
     }
 }
+
+console.log("Supabase hazır");
+
 /* ------------------------------ VERİLER ------------------------------ */
 const DECIMAL = 3; // ONDALIK HASSASİYET
 
