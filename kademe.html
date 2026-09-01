@@ -6,6 +6,8 @@
 
 <!-- SheetJS (Excel import/export için) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2script>
+    
 
 <style>
 :root {
@@ -259,6 +261,23 @@ button {
 </div>
 
 <script>
+    const supabase = window.supabase.createClient(
+    "https://pulueyocgazlsydkfetk.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB1bHVleW9jZ2F6bHN5ZGtmZXRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxNzIxOTAsImV4cCI6MjEwMzc0ODE5MH0.WesR5VqpncPUeJ_3fMy1UCYB-acfIdn7utLigLZstZ0"
+);
+
+    async function testSupabase() {
+
+    const { data, error } = await supabase
+        .from("fiyatlar")
+        .select("*");
+
+    console.log("VERİLER:", data);
+
+    if(error){
+        console.error(error);
+    }
+}
 /* ------------------------------ VERİLER ------------------------------ */
 const DECIMAL = 3; // ONDALIK HASSASİYET
 
@@ -316,6 +335,8 @@ window.onload=function(){
     ayPanel();
 
     fillFiyatIl();
+
+    testSupabase();
 
 document.getElementById("fiyatIl").addEventListener("change", fiyatTabloOlustur);
 
