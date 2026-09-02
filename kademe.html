@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Kademe</title>
 
-<!-- SheetJS (Excel import/export için) -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
@@ -16,7 +16,7 @@
     --theme-accent: #2c5cff;
 }
 
-/* GRİ TEMA */
+
 .theme-gray {
     --theme-bg: #f1f1f1;
     --theme-card: #ffffff;
@@ -185,7 +185,7 @@ button {
 
 <div class="settings-btn" onclick="toggleSettings()">⚙️ Ayarlar</div>
 
-<!-- AYARLAR PANELİ -->
+
 <div id="settingsPanel" class="settings-panel">
 <div onclick="toggleSettings()" style="cursor:pointer; font-weight:bold; margin-bottom:10px;">
 ✖ Kapat
@@ -217,7 +217,7 @@ button {
 
 <div class="main">
 
-<!-- SOL PANEL -->
+
 <div class="left">
 <h2>Kademe Hesaplama</h2>
 
@@ -250,7 +250,7 @@ button {
 <textarea id="not"></textarea>
 </div>
 
-<!-- SAĞ PANEL -->
+
 <div class="right">
 <h3>İl Bazlı Aylık Kademe Detayları</h3>
 <div id="ayPanel"></div>
@@ -259,8 +259,8 @@ button {
 </div>
 
 <script>
-/* ------------------------------ VERİLER ------------------------------ */
-const DECIMAL = 3; // ONDALIK HASSASİYET
+
+const DECIMAL = 3;
 
 let cityData = {
 "GAZİANTEP":[322.46,382.62,408.17,201.02,63.4,32.41,22.19,20.9,21.14,28.32,96.27,258.65],
@@ -294,14 +294,14 @@ let fiyatData = JSON.parse(localStorage.getItem("fiyatData")) || {
 const ayAd=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 const ayGun=[31,28,31,30,31,30,31,31,30,31,30,31];
 
-/* ------------------------------ AYARLAR PANELİ ------------------------------ */
+
 function toggleSettings(){
     const panel = document.getElementById("settingsPanel");
     panel.classList.toggle("open");
 }
 
 
-/* ------------------------------ TEMA SİSTEMİ ------------------------------ */
+
 function setTheme(t){
     document.body.className="";
     if(t!=="default") document.body.classList.add(t);
@@ -321,7 +321,7 @@ document.getElementById("fiyatIl").addEventListener("change", fiyatTabloOlustur)
 
 };
 
-/* ------------------------------ ŞEHİR LİSTESİ ------------------------------ */
+
 function fillCityList(){
     let s=document.getElementById("il");
     s.innerHTML="";
@@ -436,7 +436,7 @@ function importFiyatExcel(){
     reader.readAsArrayBuffer(file);
 }
 
-/* ------------------------------ AY PANELİ ------------------------------ */
+
 function ayPanel(active=[]){
     let il=document.getElementById("il").value;
     let h="";
@@ -452,7 +452,7 @@ function ayPanel(active=[]){
     document.getElementById("ayPanel").innerHTML=h;
 }
 
-/* ------------------------------ HESAPLAMA ------------------------------ */
+
 function hesapla(){
  let kullanim = document.getElementById("kullanim").value;
  let il=document.getElementById("il").value;
@@ -473,11 +473,11 @@ if (isNaN(toplamKcal) || toplamKcal <= 0) {
     return;
 }
 
-// SABİT DÖNÜŞÜM KATSAYISI
+
 const KATSAYI = 10.64;
 
-// kcal → sm³ dönüşümü
-let toplamTuk = toplamKcal / KATSAYI; // DÜZELTİLMİŞ TÜKETİM (sm³)
+
+let toplamTuk = toplamKcal / KATSAYI; 
 let daire = Number(document.getElementById("daire").value);
 
 if (isNaN(daire) || daire <= 0) {
@@ -485,7 +485,7 @@ if (isNaN(daire) || daire <= 0) {
     return;
 }
 
-// Merkezide daireye böl, bireyselde zaten 1 olacak
+
 toplamTuk = toplamTuk / daire;
 
  if (isNaN(toplamTuk) || toplamTuk <= 0) {
@@ -523,7 +523,7 @@ toplamTuk = toplamTuk / daire;
     let limit=gunlukLimit[il][ay];
     let ikinci=gunluk>limit;
     
-// Fiyatları al
+
 let fiyat1 = (fiyatData[il] && fiyatData[il][ay]) ? fiyatData[il][ay].k1 : 0;
 let fiyat2 = (fiyatData[il] && fiyatData[il][ay]) ? fiyatData[il][ay].k2 : 0;
 
@@ -603,7 +603,7 @@ document.addEventListener("click", function(e){
     const panel = document.getElementById("settingsPanel");
     const btn = document.querySelector(".settings-btn");
 
-    // Panel açıksa ve dışarı tıklandıysa kapat
+    
     if(panel.classList.contains("open")){
         if(!panel.contains(e.target) && !btn.contains(e.target)){
             panel.classList.remove("open");
