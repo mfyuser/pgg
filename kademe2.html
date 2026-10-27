@@ -602,12 +602,15 @@ let cursor=new Date(ilkT);
    document.getElementById("not").value =
 `Sayın Müşterimiz;
 ${ilkStr} - ${sonStr} tarihleri arasında olan kullanımınıza ilişkin detaylar;
+
 Faturanız ${notAyParcalari.join(" ve ")} kullanımı kapsamaktadır. Toplam ${toplamGun.toFixed(0)} günlüktür.
 Toplam tüketiminiz: ${toplamTuk.toFixed(DECIMAL).replace('.', ',')} sm3'tür.
 Günlük kullanımınızın tespiti için kullanımınız faturanızdaki gün sayısına bölünür.
 ${toplamTuk.toFixed(DECIMAL).replace('.', ',')} sm3 / ${toplamGun.toFixed(0)} gün = ${gunluk.toFixed(DECIMAL).replace('.', ',')} sm3 (Günlük Ortalama Kullanımınız)
+
 ${notLimitler.join("\n")}
 ${notDurumlar.join("\n")}
+
 Aylık ve günlük kademe limitlerine ve sm3 satış fiyatlarına web sayfamızdan satış tarifeleri sayfasından ulaşabilirsiniz.
 İyi günler dileriz.`;
    ayPanel([...new Set(aktifAy)]);
