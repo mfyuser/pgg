@@ -282,14 +282,44 @@ const gunlukLimit = {
 "ERZURUM":[13.56,14.65,11.57,8.77,4.97,2.11,1.31,1.08,1.15,2.03,16.90,22.48]
 };
 
-let fiyatData = JSON.parse(localStorage.getItem("fiyatData")) || {
+const varsayilanFiyatlar = {
 "GAZİANTEP": [
- {k1:0, k2:0}, {k1:0, k2:0}, {k1:0, k2:0},
- {k1:0, k2:0}, {k1:0, k2:0}, {k1:0, k2:0},
- {k1:0, k2:0}, {k1:0, k2:0}, {k1:0, k2:0},
- {k1:0, k2:0}, {k1:0, k2:0}, {k1:0, k2:0}
+   {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 15.002080, k2: 23.852080},
+   {k1: 15.042353, k2: 23.892353}, {k1: 15.130810, k2: 23.980810}, {k1: 15.168509, k2: 24.018509}, {k1: 15.190708, k2: 24.040708},
+   {k1: 15.231017, k2: 24.081017}, {k1: 15.273426, k2: 24.123426}, {k1: 0, k2: 0}, {k1: 0, k2: 0}
+],
+"KİLİS": [
+   {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 15.002080, k2: 23.852080},
+   {k1: 15.042353, k2: 23.892353}, {k1: 15.130810, k2: 23.980810}, {k1: 15.168509, k2: 24.018509}, {k1: 15.190708, k2: 24.040708},
+   {k1: 15.231017, k2: 24.081017}, {k1: 15.273426, k2: 24.123426}, {k1: 0, k2: 0}, {k1: 0, k2: 0}
+],
+"KOCAELİ": [
+   {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 15.740357, k2: 24.590357},
+   {k1: 15.794952, k2: 24.644952}, {k1: 15.914868, k2: 24.764868}, {k1: 15.965975, k2: 24.815975}, {k1: 15.996068, k2: 24.846068},
+   {k1: 16.050713, k2: 24.900713}, {k1: 16.108205, k2: 24.958205}, {k1: 0, k2: 0}, {k1: 0, k2: 0}
+],
+"KIRKLARELİ": [
+   {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 16.448143, k2: 25.298143},
+   {k1: 16.516470, k2: 25.366470}, {k1: 16.666544, k2: 25.516544}, {k1: 16.730504, k2: 25.580504}, {k1: 16.768168, k2: 25.618168},
+   {k1: 16.836556, k2: 25.686556}, {k1: 16.908506, k2: 25.758506}, {k1: 0, k2: 0}, {k1: 0, k2: 0}
+],
+"EDİRNE": [
+   {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 16.448143, k2: 25.298143},
+   {k1: 16.516470, k2: 25.366470}, {k1: 16.666544, k2: 25.516544}, {k1: 16.730504, k2: 25.580504}, {k1: 16.768168, k2: 25.618168},
+   {k1: 16.836556, k2: 25.686556}, {k1: 16.908506, k2: 25.758506}, {k1: 0, k2: 0}, {k1: 0, k2: 0}
+],
+"TEKİRDAĞ": [
+   {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 16.448143, k2: 25.298143},
+   {k1: 16.516470, k2: 25.366470}, {k1: 16.666544, k2: 25.516544}, {k1: 16.730504, k2: 25.580504}, {k1: 16.768168, k2: 25.618168},
+   {k1: 16.836556, k2: 25.686556}, {k1: 16.908506, k2: 25.758506}, {k1: 0, k2: 0}, {k1: 0, k2: 0}
+],
+"ERZURUM": [
+   {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 0, k2: 0}, {k1: 19.293184, k2: 28.143184},
+   {k1: 19.416704, k2: 28.266704}, {k1: 19.688009, k2: 28.538009}, {k1: 19.803636, k2: 28.653636}, {k1: 19.871723, k2: 28.721723},
+   {k1: 19.995354, k2: 28.845354}, {k1: 20.125427, k2: 28.975427}, {k1: 0, k2: 0}, {k1: 0, k2: 0}
 ]
 };
+let fiyatData = JSON.parse(localStorage.getItem("fiyatData")) || varsayilanFiyatlar;
 
 const ayAd=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 const ayGun=[31,28,31,30,31,30,31,31,30,31,30,31];
@@ -572,12 +602,15 @@ let cursor=new Date(ilkT);
    document.getElementById("not").value =
 `Sayın Müşterimiz;
 ${ilkStr} - ${sonStr} tarihleri arasında olan kullanımınıza ilişkin detaylar;
+
 Faturanız ${notAyParcalari.join(" ve ")} kullanımı kapsamaktadır. Toplam ${toplamGun.toFixed(0)} günlüktür.
 Toplam tüketiminiz: ${toplamTuk.toFixed(DECIMAL).replace('.', ',')} sm3'tür.
 Günlük kullanımınızın tespiti için kullanımınız faturanızdaki gün sayısına bölünür.
 ${toplamTuk.toFixed(DECIMAL).replace('.', ',')} sm3 / ${toplamGun.toFixed(0)} gün = ${gunluk.toFixed(DECIMAL).replace('.', ',')} sm3 (Günlük Ortalama Kullanımınız)
+
 ${notLimitler.join("\n")}
 ${notDurumlar.join("\n")}
+
 Aylık ve günlük kademe limitlerine ve sm3 satış fiyatlarına web sayfamızdan satış tarifeleri sayfasından ulaşabilirsiniz.
 İyi günler dileriz.`;
    ayPanel([...new Set(aktifAy)]);
