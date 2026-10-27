@@ -578,35 +578,16 @@ Toplam Tahmini Fatura: ${toplamTutar.toFixed(2)} TL
 
  document.getElementById("sonuc").innerHTML=html;
 
-let formatTR = (d) => d.toLocaleDateString("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric" });
-let bitisEkraniTarih = new Date(sonT);
-let ayParcaMetinler = [];
-let kademeMetinler = [];
-let tempC = new Date(ilkT);
-while(tempC <= sonT){
-   let ayIdx = tempC.getMonth();
-   let yl = tempC.getFullYear();
-   let aySon = new Date(yl, ayIdx + 1, 0);
-   let bts = aySon < sonT ? aySon : sonT;
-   let gunSayisi = (bts.getDate() - tempC.getDate()) + 1;
-   let lim = gunlukLimit[il][ayIdx];
-   let asimVar = gunluk > lim;
-   ayParcaMetinler.push(`${gunSayisi} gün ${ayAd[ayIdx].toLowerCase()} ayından`);
-   kademeMetinler.push(`${ayAd[ayIdx]} ayı günlük kademe limiti: ${lim.toFixed(DECIMAL).replace('.', ',')} sm3 tür.`);
-   kademeMetinler.push(`${ayAd[ayIdx]} ayı günlük kademe limitini ${asimVar ? "aştınız. (2.kademe)" : "aşmadınız. (1.kademe)"}`);
-   tempC = new Date(bts);
-   tempC.setDate(tempC.getDate() + 1);
-}
-document.getElementById("not").value =
-`Sayın Müşterimiz;
-${formatTR(ilkT)} - ${formatTR(bitisEkraniTarih)} tarihleri arasında olan kullanımınıza ilişkin detaylar;
-Faturanız ${ayParcaMetinler.join(' ve ')} kullanımı kapsamaktadır. Toplam ${toplamGun.toFixed(0)} günlüktür.
-Toplam tüketiminiz: ${toplamTuk.toFixed(DECIMAL).replace('.', ',')} sm3'tür.
-Günlük kullanımınızın tespiti için kullanımınız faturanızdaki gün sayısına bölünür.
-${toplamTuk.toFixed(DECIMAL).replace('.', ',')} sm3 / ${toplamGun.toFixed(0)} gün = ${gunluk.toFixed(DECIMAL).replace('.', ',')} sm3 (Günlük Ortalama Kullanımınız)
-${kademeMetinler.join('\n')}
-Aylık ve günlük kademe limitlerine ve sm3 satış fiyatlarına web sayfamızdan satış tarifeleri sayfasından ulaşabilirsiniz.
-İyi günler dileriz.`;
+ document.getElementById("not").value =
+`Veriler ${il} için hesaplanmıştır.
+Kullanım Tipi: ${kullanim === "merkezi" ? "Merkezi Sistem" : "Bireysel"}
+Daire Sayısı: ${daire}
+Toplam Tüketim: ${(toplamTuk * daire).toFixed(2)} m³
+Daire Başı Tüketim: ${toplamTuk.toFixed(2)} m³
+Günlük Ortalama: ${gunluk.toFixed(2)} m³
+Kademe Durumu:
+${kademeList.join("\n")}`;
++ `
 
 --------------------------------
 FATURA TAHMİNİ:
