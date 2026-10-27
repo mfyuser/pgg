@@ -170,6 +170,17 @@ button {
     color: #2c5cff;
 }
 
+.month-box.active {
+   background-color: #eff6ff !important;
+   border-color: #2563eb !important;
+   color: #1e40af !important;
+}
+   
+.month-box.k2-exceeded {
+   background-color: #fef2f2 !important;
+   border-color: #ef4444 !important;
+   color: #991b1b !important;
+}
 
 </style>
 </head>
@@ -464,28 +475,34 @@ function importFiyatExcel(){
 }
 
 
-function ayPanel(active=[]){
-   let il=document.getElementById("il").value;
-   let h="";
-   for(let i=0;i<12;i++){
-       // O aya ait fiyatları fiyatData'dan çekiyoruz
+function ayPanel(activeAylar = [], k2Aylari = []) {
+   let il = document.getElementById("il").value;
+   let h = "";
+   for(let i = 0; i < 12; i++){
        let k1Fiyat = (fiyatData[il] && fiyatData[il][i]) ? fiyatData[il][i].k1 : 0;
        let k2Fiyat = (fiyatData[il] && fiyatData[il][i]) ? fiyatData[il][i].k2 : 0;
-       h+=`
-<div class="month-box ${active.includes(i)?"active":""}" style="display: flex; justify-content: space-between; align-items: center;">
+       let isActive = activeAylar.includes(i);
+       let isK2 = k2Aylari.includes(i);
+       let boxClass = "month-box";
+       if (isK2) {
+           boxClass += " k2-exceeded";
+       } else if (isActive) {
+           boxClass += " active";
+       }
+       h += `
+<div class="${boxClass}" style="display: flex; justify-content: space-between; align-items: center;">
 <div>
 <b>${ayAd[i]}</b><br>
-               Gün Sayısı: ${ayGun[i]}<br>
-               Aylık Kademe: ${cityData[il][i]} m³<br>
-               Günlük Limit: ${gunlukLimit[il][i]}
+               Gün: ${ayGun[i]}<br>
+               Kademe: ${cityData[il][i]} m³
 </div>
-<div style="text-align: right; font-size: 13px; border-left: 1px dashed var(--theme-border); padding-left: 8px;">
-<b>K1:</b> ${k1Fiyat.toFixed(2)} TL<br>
-<b>K2:</b> ${k2Fiyat.toFixed(2)} TL
+<div style="text-align: right; font-size: 11px;">
+<b>K1:</b> ${k1Fiyat.toFixed(2)}<br>
+<b>K2:</b> ${k2Fiyat.toFixed(2)}
 </div>
 </div>`;
    }
-   document.getElementById("ayPanel").innerHTML=h;
+   document.getElementById("ayPanel").innerHTML = h;
 }
 
 
