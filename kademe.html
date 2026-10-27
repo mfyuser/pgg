@@ -496,106 +496,91 @@ toplamTuk = toplamTuk / daire;
  let toplamGun=(sonT-ilkT)/86400000 + 1
  let gunluk=toplamTuk/toplamGun;
 
- let cursor=new Date(ilkT);
- let aktifAy=[];
- let kademeList=[];
-
- let toplamTutar = 0;
- let html=`
- <p><b>Toplam Gün:</b> ${toplamGun.toFixed(0)}</p>
- <p><b>Düzeltilmiş Tüketim (sm³):</b> ${toplamTuk.toFixed(DECIMAL)}</p>
- <p><b>Günlük Ortalama (sm³):</b> ${gunluk.toFixed(DECIMAL)}</p>
- <table>
- <tr><th>Ay</th><th>Gün</th><th>Aylık Kullanım</th><th>Günlük Ortalama Kullanım</th><th>Günlük Kademe Limiti</th><th>Kademe</th></tr>Fatura (TL)</th></tr>
- `;
-
- while(cursor <= sonT){
-    let ay=cursor.getMonth();
-    aktifAy.push(ay);
-
-    let yil=cursor.getFullYear();
-    let aySonGun=new Date(yil,ay+1,0);
-    let bitis=aySonGun < sonT ? aySonGun : sonT;
-
-    let g=(bitis.getDate() - cursor.getDate())+1;
-
-    let ayTuk=g*gunluk;
-    let limit=gunlukLimit[il][ay];
-    let ikinci=gunluk>limit;
-    
-
-let fiyat1 = (fiyatData[il] && fiyatData[il][ay]) ? fiyatData[il][ay].k1 : 0;
-let fiyat2 = (fiyatData[il] && fiyatData[il][ay]) ? fiyatData[il][ay].k2 : 0;
-
-let ayTutar = 0;
-
-if (ikinci) {
-    ayTutar = ayTuk * fiyat2;
-} else {
-    ayTutar = ayTuk * fiyat1;
-}
-
-toplamTutar += ayTutar;
-    kademeList.push(`${ayAd[ay]}: ${ikinci?"2. Kademe":"1. Kademe"}`);
-
-    html+=`
-    <tr class="${ikinci?"red":""}">
-      <td>${ayAd[ay]}</td>
-      <td>${g}</td>
-      <td>${ayTuk.toFixed(DECIMAL)}</td>
-      <td class="highlight-ok" title="Günlük ortalama tüketim">
-    ${gunluk.toFixed(DECIMAL)}
-</td>
-
-<td class="${ikinci ? 'highlight-limit' : 'highlight-ok'}"
-    title="${ikinci ? 'Limit aşılmış' : 'Limit altında'}">
-    ${limit.toFixed(DECIMAL)}
-</td>
-      <td>${ikinci?"2. KADEME":"1. KADEME"}</td>
-      <td>${ayTutar.toFixed(2)} TL</td>
-    </tr>`;
-
-    cursor=new Date(bitis);
-    cursor.setDate(cursor.getDate()+1);
- }
-
- html+="</table>";
-
-html+=`
+let cursor=new Date(ilkT);
+   let aktifAy=[];
+   let kademeList=[];
+   let toplamTutar = 0;
+   let notAyParcalari = [];
+   let notLimitler = [];
+   let notDurumlar = [];
+   let html=`
+<p><b>Toplam Gün:</b> ${toplamGun.toFixed(0)}</p>
+<p><b>Düzeltilmiş Tüketim (sm³):</b> ${toplamTuk.toFixed(DECIMAL)}</p>
+<p><b>Günlük Ortalama (sm³):</b> ${gunluk.toFixed(DECIMAL)}</p>
+<table>
+<tr><th>Ay</th><th>Gün</th><th>Aylık Kullanım</th><th>Günlük Ortalama Kullanım</th><th>Günlük Kademe Limiti</th><th>Kademe</th><th>Fatura (TL)</th></tr>
+   `;
+   while(cursor <= sonT){
+       let ay=cursor.getMonth();
+       aktifAy.push(ay);
+       let yil=cursor.getFullYear();
+       let aySonGun=new Date(yil,ay+1,0);
+       let bitis=aySonGun < sonT ? aySonGun : sonT;
+       let g=(bitis.getDate() - cursor.getDate())+1;
+       let ayTuk=g*gunluk;
+       let limit=gunlukLimit[il][ay];
+       let ikinci=gunluk>limit;
+       let fiyat1 = (fiyatData[il] && fiyatData[il][ay]) ? fiyatData[il][ay].k1 : 0;
+       let fiyat2 = (fiyatData[il] && fiyatData[il][ay]) ? fiyatData[il][ay].k2 : 0;
+       let ayTutar = 0;
+       if (ikinci) {
+           ayTutar = ayTuk * fiyat2;
+       } else {
+           ayTutar = ayTuk * fiyat1;
+       }
+       toplamTutar += ayTutar;
+       kademeList.push(`${ayAd[ay]}: ${ikinci?"2. Kademe":"1. Kademe"}`);
+       notAyParcalari.push(`${g} gün ${ayAd[ay].toLowerCase()} ayından`);
+       notLimitler.push(`${ayAd[ay]} ayı günlük kademe limiti: ${limit.toFixed(DECIMAL).replace('.', ',')} sm3 tür.`);
+       if (ikinci) {
+           notDurumlar.push(`${ayAd[ay]} ayı günlük kademe limitini aştınız. (2.kademe)`);
+       } else {
+           notDurumlar.push(`${ayAd[ay]} ayı günlük kademe limitinin altındasınız. (1.kademe)`);
+       }
+       html+=`
+<tr class="${ikinci?"red":""}">
+<td>${ayAd[ay]}</td>
+<td>${g}</td>
+<td>${ayTuk.toFixed(DECIMAL)}</td>
+<td class="highlight-ok" title="Günlük ortalama tüketim">${gunluk.toFixed(DECIMAL)}</td>
+<td class="${ikinci ? 'highlight-limit' : 'highlight-ok'}" title="${ikinci ? 'Limit aşılmış' : 'Limit altında'}">${limit.toFixed(DECIMAL)}</td>
+<td>${ikinci?"2. KADEME":"1. KADEME"}</td>
+<td>${ayTutar.toFixed(2)} TL</td>
+</tr>`;
+       cursor=new Date(bitis);
+       cursor.setDate(cursor.getDate()+1);
+   }
+   html+="</table>";
+   html+=`
 <div style="
-    margin-top:15px;
-    padding:10px;
-    border:2px solid var(--theme-accent);
-    border-radius:8px;
-    font-size:18px;
-    font-weight:bold;
-    text-align:center;
-    background: var(--theme-bg);
-">
-Toplam Tahmini Fatura: ${toplamTutar.toFixed(2)} TL
+       margin-top:15px;
+       padding:10px;
+       border:2px solid var(--theme-accent);
+       border-radius:8px;
+       font-size:18px;
+       font-weight:bold;
+       text-align:center;
+       background: var(--theme-bg);
+   ">
+   Toplam Tahmini Fatura: ${toplamTutar.toFixed(2)} TL
 </div>
-`;
-
- document.getElementById("sonuc").innerHTML=html;
-
- document.getElementById("not").value =
-`Veriler ${il} için hesaplanmıştır.
-Kullanım Tipi: ${kullanim === "merkezi" ? "Merkezi Sistem" : "Bireysel"}
-Daire Sayısı: ${daire}
-Toplam Tüketim: ${(toplamTuk * daire).toFixed(2)} m³
-Daire Başı Tüketim: ${toplamTuk.toFixed(2)} m³
-Günlük Ortalama: ${gunluk.toFixed(2)} m³
-Kademe Durumu:
-${kademeList.join("\n")}`;
-+ `
-
---------------------------------
-FATURA TAHMİNİ:
-
-Toplam: ${toplamTutar.toFixed(2)} TL
-`
-
- ayPanel([...new Set(aktifAy)]);
+   `;
+   document.getElementById("sonuc").innerHTML=html;
+   let ilkStr = new Date(document.getElementById("ilkT").value).toLocaleDateString("tr-TR");
+   let bitisEkraniTarih = new Date(sonT);
+   let sonStr = bitisEkraniTarih.toLocaleDateString("tr-TR");
+   document.getElementById("not").value =
+`Sayın Müşterimiz;
+${ilkStr} - ${sonStr} tarihleri arasında olan kullanımınıza ilişkin detaylar;
+Faturanız ${notAyParcalari.join(" ve ")} kullanımı kapsamaktadır. Toplam ${toplamGun.toFixed(0)} günlüktür.
+Toplam tüketiminiz: ${toplamTuk.toFixed(DECIMAL).replace('.', ',')} sm3'tür.
+Günlük kullanımınızın tespiti için kullanımınız faturanızdaki gün sayısına bölünür.
+${toplamTuk.toFixed(DECIMAL).replace('.', ',')} sm3 / ${toplamGun.toFixed(0)} gün = ${gunluk.toFixed(DECIMAL).replace('.', ',')} sm3 (Günlük Ortalama Kullanımınız)
+${notLimitler.join("\n")}
+${notDurumlar.join("\n")}
+Aylık ve günlük kademe limitlerine ve sm3 satış fiyatlarına web sayfamızdan satış tarifeleri sayfasından ulaşabilirsiniz.
+İyi günler dileriz.`;
+   ayPanel([...new Set(aktifAy)]);
 }
 
 
