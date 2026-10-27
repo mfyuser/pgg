@@ -2,39 +2,12 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Kademeli Tarife Hesaplama</title>
+<title>Kademe</title>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
-
-.app-container, .main-layout, body > div:first-of-type {
-   display: grid !important;
-   grid-template-columns: 0.8fr 1.5fr !important;
-   gap: 20px !important;
-   align-items: start !important;
-   max-width: 1400px !important;
-   margin: 0 auto !important;
-   padding: 20px !important;
-}
-#ayPanel {
-   display: grid !important;
-   grid-template-columns: repeat(3, 1fr) !important;
-   gap: 12px !important;
-   width: 100% !important;
-}
-.month-box {
-   padding: 12px 14px !important;
-   font-size: 12px !important;
-   line-height: 1.5 !important;
-}
-@media (max-width: 1024px) {
-   .app-container, .main-layout, body > div:first-of-type {
-       grid-template-columns: 1fr !important;
-   }
-}
- 
 :root {
    --theme-bg: #f4f7fc;
    --theme-card: #ffffff;
@@ -81,7 +54,7 @@ input, select, textarea {
     top: 120px;
     background: var(--theme-accent);
     color: white;
-    padding: 8px 10px;
+    padding: 10px 15px;
     cursor: pointer;
     border-radius: 6px;
     font-weight: bold;
@@ -155,13 +128,12 @@ th, td {
 }
 
 .month-box {
-   padding: 12px 16px !important;
-   font-size: 13px !important;
-   line-height: 1.6 !important;
-   background: var(--theme-card);
-   border: 1px solid var(--theme-border);
-   border-radius: 6px;
-   transition: all 0.25s ease-in-out;
+    border: 1px solid var(--theme-border);
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    background: var(--theme-bg);
+    font-size: 14px;
 }
 
 .month-box.active {
@@ -198,73 +170,19 @@ button {
     color: #2c5cff;
 }
 
-@keyframes fadeInUp {
-   from {
-       opacity: 0;
-       transform: translateY(8px);
-   }
-   to {
-       opacity: 1;
-       transform: translateY(0);
-   }
-}
-body, .month-box, #settingsPanel {
-   animation: fadeInUp 0.3s ease-out forwards;
-}
-button {
-   transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-}
-button:hover {
-   transform: translateY(-1.5px);
-   box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
-}
-button:active {
-   transform: translateY(0) scale(0.97);
-}
-.month-box {
-   transition: all 0.25s ease-in-out;
-}
-.month-box.active {
-   transform: scale(1.02);
-   box-shadow: 0 3px 8px rgba(37, 99, 235, 0.18);
-   border-left: 4px solid var(--theme-accent);
-}
-@keyframes pulseGlow {
-   0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
-   70% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
-   100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
-}
-.flash-updated {
-   animation: pulseGlow 0.5s ease-out;
-}  
 
-.month-box.k2-exceeded {
-   border: 2px solid #ef4444 !important;
-   background-color: #fef2f2 !important;
-   position: relative;
-}
-.month-box.k2-exceeded::after {
-   content: '⚠️ 2. Kademe';
-   position: absolute;
-   top: 4px;
-   right: 6px;
-   background: #ef4444;
-   color: #ffffff;
-   font-size: 9px;
-   font-weight: bold;
-   padding: 1px 5px;
-   border-radius: 3px;
-}
-
-#ayPanel {
-   display: grid !important;
-   grid-template-columns: repeat(2, 1fr) !important;
-   gap: 8px !important;
-}
-   
 </style>
+</head>
 
-<div class="settings-btn" onclick="toggleSettings()">⚙️ Menü</div>
+<body>
+
+<div class="header">
+  <h1>Kademe</h1>
+  <div class="mail">mfy@_.com</div>
+</div>
+
+<div class="settings-btn" onclick="toggleSettings()">⚙️ Ayarlar</div>
+
 
 <div id="settingsPanel" class="settings-panel">
 <div onclick="toggleSettings()" style="cursor:pointer; font-weight:bold; margin-bottom:10px;">
@@ -276,8 +194,8 @@ button:active {
 
   <div id="fiyatTablo"></div>
 
-  <button onclick="kaydetFiyatlar()">💾 Benim Tarayıcıma Kaydet</button>
-<button onclick="exportFiyatExcel()">📤 Fiyatları Excel’e İndir</button>
+  <button onclick="kaydetFiyatlar()">💾 Kaydet</button>
+<button onclick="exportFiyatExcel()">📤 Fiyatları Excel’e Aktar</button>
 
 <input type="file" id="fiyatExcelInput" 
        accept=".xlsx"
@@ -550,6 +468,7 @@ function ayPanel(active=[]){
    let il=document.getElementById("il").value;
    let h="";
    for(let i=0;i<12;i++){
+       // O aya ait fiyatları fiyatData'dan çekiyoruz
        let k1Fiyat = (fiyatData[il] && fiyatData[il][i]) ? fiyatData[il][i].k1 : 0;
        let k2Fiyat = (fiyatData[il] && fiyatData[il][i]) ? fiyatData[il][i].k2 : 0;
        h+=`
