@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<title>Kademe</title>
+<title>Kademeli Tarife Hesaplama</title>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -177,12 +177,10 @@ button {
 <body>
 
 <div class="header">
-  <h1>Kademe</h1>
-  <div class="mail">mfy@_.com</div>
+  <div class="mail">mfy</div>
 </div>
 
-<div class="settings-btn" onclick="toggleSettings()">⚙️ Ayarlar</div>
-
+<div class="settings-btn" onclick="toggleSettings()">⚙️ Menü</div>
 
 <div id="settingsPanel" class="settings-panel">
 <div onclick="toggleSettings()" style="cursor:pointer; font-weight:bold; margin-bottom:10px;">
@@ -194,8 +192,8 @@ button {
 
   <div id="fiyatTablo"></div>
 
-  <button onclick="kaydetFiyatlar()">💾 Kaydet</button>
-<button onclick="exportFiyatExcel()">📤 Fiyatları Excel’e Aktar</button>
+  <button onclick="kaydetFiyatlar()">💾 Benim Tarayıcıma Kaydet</button>
+<button onclick="exportFiyatExcel()">📤 Fiyatları Excel’e İndir</button>
 
 <input type="file" id="fiyatExcelInput" 
        accept=".xlsx"
