@@ -468,18 +468,27 @@ function importFiyatExcel(){
 
 
 function ayPanel(active=[]){
-    let il=document.getElementById("il").value;
-    let h="";
-    for(let i=0;i<12;i++){
-        h+=`
-        <div class="month-box ${active.includes(i)?"active":""}">
-            <b>${ayAd[i]}</b><br>
-            Gün Sayısı: ${ayGun[i]}<br>
-            Aylık Kademe: ${cityData[il][i]} m³<br>
-            Günlük Limit: ${gunlukLimit[il][i]}
-        </div>`;
-    }
-    document.getElementById("ayPanel").innerHTML=h;
+   let il=document.getElementById("il").value;
+   let h="";
+   for(let i=0;i<12;i++){
+       // O aya ait fiyatları fiyatData'dan çekiyoruz
+       let k1Fiyat = (fiyatData[il] && fiyatData[il][i]) ? fiyatData[il][i].k1 : 0;
+       let k2Fiyat = (fiyatData[il] && fiyatData[il][i]) ? fiyatData[il][i].k2 : 0;
+       h+=`
+<div class="month-box ${active.includes(i)?"active":""}" style="display: flex; justify-content: space-between; align-items: center;">
+<div>
+<b>${ayAd[i]}</b><br>
+               Gün Sayısı: ${ayGun[i]}<br>
+               Aylık Kademe: ${cityData[il][i]} m³<br>
+               Günlük Limit: ${gunlukLimit[il][i]}
+</div>
+<div style="text-align: right; font-size: 13px; border-left: 1px dashed var(--theme-border); padding-left: 8px;">
+<b>K1:</b> ${k1Fiyat.toFixed(2)} TL<br>
+<b>K2:</b> ${k2Fiyat.toFixed(2)} TL
+</div>
+</div>`;
+   }
+   document.getElementById("ayPanel").innerHTML=h;
 }
 
 
