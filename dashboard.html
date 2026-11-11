@@ -140,10 +140,10 @@
     box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35);
   }
 
-  /* 4'lü Modüller Grid Yapısı */
+  /* 10'lu Modüller Grid Yapısı */
   .modules-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 22px;
     width: 100%;
   }
@@ -296,6 +296,12 @@
   }
 
   /* Responsive Uyumluluk */
+  @media (max-width: 1400px) {
+    .modules-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
   @media (max-width: 1200px) {
     .top-header {
       flex-direction: column;
@@ -348,6 +354,7 @@
     <h2 class="section-title">Modüller</h2>
     <div class="modules-grid">
 
+      <!-- Aktif Modüller (1-4) -->
       <a href="https://mfyuser.github.io/pgg/gecikmefaiziv1.html" target="_blank" class="module-card">
         <div class="module-card-content">
           <div class="module-card-title">Gecikme Bedeli Hesaplama</div>
@@ -388,6 +395,67 @@
         </div>
       </a>
 
+      <!-- Test Sürecindeki Modüller (5-10) -->
+      <a href="https://www.google.com" target="_blank" class="module-card">
+        <div class="module-card-content">
+          <div class="module-card-title">Test Sürecindedir</div>
+          <span class="module-card-subtitle">Araca git →</span>
+        </div>
+        <div class="module-icon-wrapper">
+          <img src="https://cdn.pixabay.com/photo/2022/07/05/18/16/fire-7303709_960_720.png" alt="Test">
+        </div>
+      </a>
+
+      <a href="https://www.google.com" target="_blank" class="module-card">
+        <div class="module-card-content">
+          <div class="module-card-title">Test Sürecindedir</div>
+          <span class="module-card-subtitle">Araca git →</span>
+        </div>
+        <div class="module-icon-wrapper">
+          <img src="https://png.pngtree.com/png-clipart/20250428/original/pngtree-bill-paper-png-image_20882692.png" alt="Test">
+        </div>
+      </a>
+
+      <a href="https://www.google.com" target="_blank" class="module-card">
+        <div class="module-card-content">
+          <div class="module-card-title">Test Sürecindedir</div>
+          <span class="module-card-subtitle">Araca git →</span>
+        </div>
+        <div class="module-icon-wrapper">
+          <img src="https://play-lh.googleusercontent.com/6BXXSKJkBr__NXI6rLhR4Ld2l02LD1wrzHUIWBKQAKax6uEiaxxcO8_rz9enAuzQ5MPq0WtKrBwD6cH3Rkh3qQ" alt="Test">
+        </div>
+      </a>
+
+      <a href="https://www.google.com" target="_blank" class="module-card">
+        <div class="module-card-content">
+          <div class="module-card-title">Test Sürecindedir</div>
+          <span class="module-card-subtitle">Araca git →</span>
+        </div>
+        <div class="module-icon-wrapper">
+          <img src="https://cdn.pixabay.com/photo/2022/07/21/11/48/fire-7336074_1280.png" alt="Test">
+        </div>
+      </a>
+
+      <a href="https://www.google.com" target="_blank" class="module-card">
+        <div class="module-card-content">
+          <div class="module-card-title">Test Sürecindedir</div>
+          <span class="module-card-subtitle">Araca git →</span>
+        </div>
+        <div class="module-icon-wrapper">
+          <img src="https://cdn.pixabay.com/photo/2022/07/05/18/16/fire-7303709_960_720.png" alt="Test">
+        </div>
+      </a>
+
+      <a href="https://www.google.com" target="_blank" class="module-card">
+        <div class="module-card-content">
+          <div class="module-card-title">Test Sürecindedir</div>
+          <span class="module-card-subtitle">Araca git →</span>
+        </div>
+        <div class="module-icon-wrapper">
+          <img src="https://png.pngtree.com/png-clipart/20250428/original/pngtree-bill-paper-png-image_20882692.png" alt="Test">
+        </div>
+      </a>
+
     </div>
   </section>
 
@@ -425,9 +493,8 @@
     try {
       const response = await fetch('https://open.er-api.com/v6/latest/USD');
       const data = await response.json();
-      if (data && data.rates && data.rates.TRY) {
+'      if (data && data.rates && data.rates.TRY) {
         const usdToTry = data.rates.TRY;
-        // EUR kuru USD bazlı geldiği için EUR -> TRY hesaplanır
         const eurToTry = usdToTry / data.rates.EUR;
 
         document.getElementById('usd-rate').textContent = usdToTry.toFixed(2) + ' ₺';
@@ -441,7 +508,6 @@
   }
 
   fetchExchangeRates();
-  // Her 10 dakikada bir kurları güncelle
   setInterval(fetchExchangeRates, 600000);
 </script>
 
