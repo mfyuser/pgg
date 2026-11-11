@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="prices.js"></script>
+
+    <script>
+        tailwind.config = {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doğalgaz Fiyat Zam Oranı Hesaplayıcı (2024-2026)</title>
@@ -324,32 +331,60 @@
     <!-- JavaScript Application Code -->
     <script>
         // Static embedded dataset for companies from 2024 to 2026
+<script>
+        // Senin istediğin 8 ilin listesi
+        const COMPANIES = [
+            "Gaziantep",
+            "Kilis",
+            "Kocaeli Plg",
+            "Kocaeli İzg",
+            "Kırklareli",
+            "Edirne",
+            "Tekirdağ",
+            "Erzurum"
+        ];
+
         const MONTH_NAMES = [
             "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
             "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
         ];
 
-        const YEARS = [2024, 2025, 2026];
+        const YEARS = [2025, 2026]; // Sadece 2025 ve 2026 yılları
 
-        const COMPANIES = [
-            "Gazdaş Gaziantep",
-            "Gazdaş Trakya",
-            "İzgaz",
-            "Palgaz",
-            "Palen"
-        ];
-
-        // Base price profiles per company to generate realistic historical trend data
-        const baseProfiles = {
-            "Gazdaş Gaziantep": { k1: 4.85, k2: 8.90, growthYearly: 0.28 },
-            "Gazdaş Trakya":    { k1: 4.90, k2: 9.10, growthYearly: 0.27 },
-            "İzgaz":            { k1: 5.10, k2: 9.40, growthYearly: 0.26 },
-            "Palgaz":           { k1: 4.95, k2: 9.20, growthYearly: 0.29 },
-            "Palen":            { k1: 4.80, k2: 8.80, growthYearly: 0.30 }
-        };
-
-        // Generating complete deterministic monthly dataset (2024, 2025, 2026)
+        // Verileri prices.js dosyasından otomatik alan kısım
         const dbData = {};
+
+        COMPANIES.forEach(company => {
+            dbData[company] = [];
+            
+            YEARS.forEach(year => {
+                MONTH_NAMES.forEach((month, mIndex) => {
+                    const monthNumber = mIndex + 1;
+                    
+                    let k1Val = 0.0000;
+                    let k2Val = 0.0000;
+
+                    // prices.js içinde veri var mı diye bakar, varsa çeker
+                    if (
+                        window.ENERGY_PRICES && 
+                        ENERGY_PRICES[company] && 
+                        ENERGY_PRICES[company][year] && 
+                        ENERGY_PRICES[company][year][monthNumber]
+                    ) {
+                        k1Val = ENERGY_PRICES[company][year][monthNumber].k1;
+                        k2Val = ENERGY_PRICES[company][year][monthNumber].k2;
+                    }
+
+                    dbData[company].push({
+                        year: year,
+                        monthIndex: monthNumber,
+                        monthName: month,
+                        k1: k1Val,
+                        k2: k2Val
+                    });
+                });
+            });
+        });
 
         COMPANIES.forEach(company => {
             dbData[company] = [];
