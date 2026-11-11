@@ -1,22 +1,19 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <script src="prices.js"></script>
-
-    <script>
-        tailwind.config = {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doğalgaz Fiyat Zam Oranı Hesaplayıcı (2024-2026)</title>
+    <title>Doğalgaz Fiyat Zam Oranı Hesaplayıcı (2025-2026)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Merkezi Fiyat Dosyamız -->
+    <script src="prices.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -108,12 +105,12 @@
                 </div>
                 <div>
                     <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Doğalgaz Zam Oranı Analiz Portalı</h1>
-                    <p class="text-xs md:text-sm text-gray-600 font-medium">1. & 2. Kademe Birim Fiyat Karşılaştırma & Zam Hesaplama (2024 - 2026)</p>
+                    <p class="text-xs md:text-sm text-gray-600 font-medium">1. & 2. Kademe Birim Fiyat Karşılaştırma & Zam Hesaplama (2025 - 2026)</p>
                 </div>
             </div>
             <div class="flex items-center space-x-2 bg-red-50 text-brandRed-700 font-semibold px-4 py-2 rounded-xl border border-red-200 text-xs md:text-sm">
                 <i class="fa-solid fa-building-circle-check"></i>
-                <span id="selected-company-badge">Gazdaş Gaziantep</span>
+                <span id="selected-company-badge">Gaziantep</span>
             </div>
         </header>
 
@@ -128,7 +125,7 @@
                 <!-- Company Selector -->
                 <div class="md:col-span-1 space-y-1.5">
                     <label for="companySelect" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
-                        <i class="fa-solid fa-industry mr-1 text-brandRed-600"></i> Şirket
+                        <i class="fa-solid fa-industry mr-1 text-brandRed-600"></i> Şirket / İl
                     </label>
                     <select id="companySelect" class="glass-input w-full p-3 rounded-xl text-sm font-semibold text-gray-800">
                         <!-- Populated by JS -->
@@ -325,13 +322,11 @@
 
     <!-- Footer -->
     <footer class="mt-8 text-center text-xs text-white/80 font-medium">
-        <p>© 2024 - 2026 Doğalgaz Dağıtım Şirketleri Fiyat Analiz Sistemi | Gazdaş Gaziantep, Gazdaş Trakya, İzgaz, Palgaz, Palen</p>
+        <p>©️ 2025 - 2026 Doğalgaz Dağıtım Şirketleri Fiyat Analiz Sistemi | Gaziantep, Kilis, Kocaeli Plg, Kocaeli İzg, Kırklareli, Edirne, Tekirdağ, Erzurum</p>
     </footer>
 
     <!-- JavaScript Application Code -->
     <script>
-        // Static embedded dataset for companies from 2024 to 2026
-<script>
         // Senin istediğin 8 ilin listesi
         const COMPANIES = [
             "Gaziantep",
@@ -349,9 +344,9 @@
             "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
         ];
 
-        const YEARS = [2025, 2026]; // Sadece 2025 ve 2026 yılları
+        const YEARS = [2025, 2026]; // 2025 ve 2026 yılları
 
-        // Verileri prices.js dosyasından otomatik alan kısım
+        // Verileri prices.js dosyasından (ENERGY_PRICES) otomatik çeken kısım
         const dbData = {};
 
         COMPANIES.forEach(company => {
@@ -382,31 +377,6 @@
                         k1: k1Val,
                         k2: k2Val
                     });
-                });
-            });
-        });
-
-        COMPANIES.forEach(company => {
-            dbData[company] = [];
-            const base = baseProfiles[company];
-            let index = 0;
-
-            YEARS.forEach(year => {
-                MONTH_NAMES.forEach((month, mIndex) => {
-                    // Cumulative growth formula to mimic inflation & price updates
-                    const monthFactor = 1 + (index * 0.018) + (mIndex === 7 ? 0.08 : 0); // extra summer tariff adjustment
-                    
-                    const k1Price = Number((base.k1 * monthFactor).toFixed(4));
-                    const k2Price = Number((base.k2 * monthFactor * 1.02).toFixed(4));
-
-                    dbData[company].push({
-                        year: year,
-                        monthIndex: mIndex + 1,
-                        monthName: month,
-                        k1: k1Price,
-                        k2: k2Price
-                    });
-                    index++;
                 });
             });
         });
@@ -463,8 +433,8 @@
             startMonthSelect.innerHTML = monthOptions;
             endMonthSelect.innerHTML = monthOptions;
 
-            // Set default values: Start: 2024 Jan, End: 2026 Dec
-            startYearSelect.value = 2024;
+            // Set default values: Start: 2025 Jan, End: 2026 Dec
+            startYearSelect.value = 2025;
             startMonthSelect.value = 1;
             endYearSelect.value = 2026;
             endMonthSelect.value = 12;
@@ -512,23 +482,23 @@
             // Calculations
             // Kademe 1 Zam Oranı
             const k1Diff = endData.k1 - startData.k1;
-            const k1IncreasePct = (k1Diff / startData.k1) * 100;
+            const k1IncreasePct = startData.k1 === 0 ? 0 : (k1Diff / startData.k1) * 100;
 
             // Kademe 2 Zam Oranı
             const k2Diff = endData.k2 - startData.k2;
-            const k2IncreasePct = (k2Diff / startData.k2) * 100;
+            const k2IncreasePct = startData.k2 === 0 ? 0 : (k2Diff / startData.k2) * 100;
 
             // Kademe 1 vs Kademe 2 initial ratio & diff
             const startK2K1Diff = startData.k2 - startData.k1;
-            const startK2K1Pct = (startK2K1Diff / startData.k1) * 100;
+            const startK2K1Pct = startData.k1 === 0 ? 0 : (startK2K1Diff / startData.k1) * 100;
 
             // Kademe 1 vs Kademe 2 end ratio & diff
             const endK2K1Diff = endData.k2 - endData.k1;
-            const endK2K1Pct = (endK2K1Diff / endData.k1) * 100;
+            const endK2K1Pct = endData.k1 === 0 ? 0 : (endK2K1Diff / endData.k1) * 100;
 
             // Multipliers
-            const startMultVal = (startData.k2 / startData.k1).toFixed(2);
-            const endMultVal = (endData.k2 / endData.k1).toFixed(2);
+            const startMultVal = startData.k1 === 0 ? '1.00' : (startData.k2 / startData.k1).toFixed(2);
+            const endMultVal = endData.k1 === 0 ? '1.00' : (endData.k2 / endData.k1).toFixed(2);
 
             // Update UI KPI Cards
             k1Rate.innerText = formatPercent(k1IncreasePct);
@@ -579,7 +549,7 @@
                     rowBgClass = "bg-red-50 font-semibold";
                 }
 
-                const diffPct = (((rec.k2 - rec.k1) / rec.k1) * 100).toFixed(2);
+                const diffPct = rec.k1 === 0 ? '0.00' : (((rec.k2 - rec.k1) / rec.k1) * 100).toFixed(2);
 
                 return `
                     <tr class="${rowBgClass} transition-colors">
