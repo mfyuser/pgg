@@ -356,19 +356,22 @@
                 MONTH_NAMES.forEach((month, mIndex) => {
                     const monthNumber = mIndex + 1;
                     
-                    let k1Val = 0.0000;
-                    let k2Val = 0.0000;
+let k1Val = 0.0000;
+let k2Val = 0.0000;
 
-                    // prices.js içinde veri var mı diye bakar, varsa çeker
-                    if (
-                        window.ENERGY_PRICES && 
-                        ENERGY_PRICES[company] && 
-                        ENERGY_PRICES[company][year] && 
-                        ENERGY_PRICES[company][year][monthNumber]
-                    ) {
-                        k1Val = ENERGY_PRICES[company][year][monthNumber].k1;
-                        k2Val = ENERGY_PRICES[company][year][monthNumber].k2;
-                    }
+// Ay numarasını 2 haneli stringe çeviriyoruz (Örn: 1 -> "01", 6 -> "06")
+const monthKey = monthNumber < 10 ? "0" + monthNumber : "" + monthNumber;
+
+// prices.js içinde veri var mı diye bakar, varsa çeker
+if (
+    window.ENERGY_PRICES && 
+    ENERGY_PRICES[company] && 
+    ENERGY_PRICES[company][year] && 
+    ENERGY_PRICES[company][year][monthKey]
+) {
+    k1Val = ENERGY_PRICES[company][year][monthKey].k1;
+    k2Val = ENERGY_PRICES[company][year][monthKey].k2;
+}
 
                     dbData[company].push({
                         year: year,
