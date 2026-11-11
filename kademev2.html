@@ -430,6 +430,9 @@ button:hover {
 
     <h3 style="margin-top: 20px;">İl Bazlı Aylık Kademe Detayları</h3>
     <div id="ayPanel"></div>
+
+    <label style="margin-top:15px;">Bilgilendirme Notu</label>
+    <textarea id="not"></textarea>
   </div>
 
 </div>
@@ -799,19 +802,10 @@ let cursor=new Date(ilkT);
    Toplam Tahmini Fatura: ${toplamTutar.toFixed(2)} TL
 </div>
    `;
-
-   // Bilgilendirme Notu ve Textarea'yı da sonuç bölümünün içine ekliyoruz
-   html+=`
-<label style="margin-top:15px;">Bilgilendirme Notu</label>
-<textarea id="not" style="height: 110px; margin-top: 5px; width: 100%;"></textarea>
-   `;
-
    document.getElementById("sonuc").innerHTML=html;
-
    let ilkStr = new Date(document.getElementById("ilkT").value).toLocaleDateString("tr-TR");
    let bitisEkraniTarih = new Date(sonT);
    let sonStr = bitisEkraniTarih.toLocaleDateString("tr-TR");
-   
    document.getElementById("not").value =
 `Sayın Müşterimiz;
 ${ilkStr} - ${sonStr} tarihleri arasında olan kullanımınıza ilişkin detaylar;
@@ -826,7 +820,6 @@ ${notDurumlar.join("\n")}
 
 Aylık ve günlük kademe limitlerine ve sm3 satış fiyatlarına web sayfamızdan satış tarifeleri sayfasından ulaşabilirsiniz.
 İyi günler dileriz.`;
-
    ayPanel();
 }
 
