@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doğalgaz Fiyat Zam Oranı Hesaplayıcı (2025-2026)</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Fiyat Değişimi Hesapla</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script>
@@ -71,7 +71,7 @@
             outline: none;
         }
 
-        /* Scrollbar styling */
+        
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -91,10 +91,10 @@
 </head>
 <body class="font-sans antialiased p-4 md:p-8 min-h-screen flex flex-col justify-between">
 
-    <!-- Main Container -->
+    
     <div class="max-w-7xl mx-auto w-full space-y-6">
 
-        <!-- Header -->
+        
         <header class="glass-card rounded-2xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-l-8 border-brandRed-600">
             <div class="flex items-center space-x-4">
                 <div class="w-14 h-14 bg-gradient-to-tr from-brandRed-700 to-brandRed-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-brandRed-900/40">
@@ -111,7 +111,7 @@
             </div>
         </header>
 
-        <!-- Control Panel (Selection Box) -->
+        
         <section class="glass-card rounded-2xl p-6 shadow-xl space-y-4">
             <div class="flex items-center space-x-2 border-b border-red-100 pb-3">
                 <i class="fa-solid fa-sliders text-brandRed-600 text-lg"></i>
@@ -119,7 +119,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <!-- Company Selector -->
+                
                 <div class="md:col-span-1 space-y-1.5">
                     <label for="companySelect" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
                         <i class="fa-solid fa-industry mr-1 text-brandRed-600"></i> Şirket / İl
@@ -129,7 +129,7 @@
                     </select>
                 </div>
 
-                <!-- Start Period -->
+                
                 <div class="space-y-1.5">
                     <label for="startYear" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
                         <i class="fa-regular fa-calendar mr-1 text-brandRed-600"></i> Başlangıç Yılı
@@ -144,7 +144,7 @@
                     <select id="startMonth" class="glass-input w-full p-3 rounded-xl text-sm font-semibold text-gray-800"></select>
                 </div>
 
-                <!-- End Period -->
+                
                 <div class="space-y-1.5">
                     <label for="endYear" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
                         <i class="fa-solid fa-calendar-day mr-1 text-brandRed-600"></i> Bitiş Yılı
@@ -160,17 +160,17 @@
                 </div>
             </div>
 
-            <!-- Quick Action / Error Message Banner -->
+            
             <div id="error-banner" class="hidden p-3 rounded-xl bg-red-100 border border-red-300 text-red-700 text-xs font-medium flex items-center space-x-2">
                 <i class="fa-solid fa-triangle-exclamation text-base"></i>
                 <span id="error-message">Başlangıç dönemi bitiş döneminden sonra olamaz!</span>
             </div>
         </section>
 
-        <!-- KPI & Calculation Results Cards -->
+        
         <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
-            <!-- Kademe 1 Zam Oranı -->
+            
             <div class="glass-card rounded-2xl p-5 border-t-4 border-brandRed-600 relative overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-start mb-2">
@@ -186,7 +186,7 @@
                 </div>
             </div>
 
-            <!-- Kademe 2 Zam Oranı -->
+            
             <div class="glass-card rounded-2xl p-5 border-t-4 border-red-800 relative overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-start mb-2">
@@ -202,7 +202,7 @@
                 </div>
             </div>
 
-            <!-- Kademe 1 vs Kademe 2 Oranı (Başlangıç) -->
+            
             <div class="glass-card rounded-2xl p-5 border-t-4 border-amber-500 relative overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-start mb-2">
@@ -217,7 +217,7 @@
                 </div>
             </div>
 
-            <!-- Kademe 1 vs Kademe 2 Oranı (Bitiş) -->
+            
             <div class="glass-card rounded-2xl p-5 border-t-4 border-emerald-600 relative overflow-hidden flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-start mb-2">
@@ -234,10 +234,10 @@
 
         </section>
 
-        <!-- Detailed Comparison Breakdown Section -->
+        
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            <!-- Deep Analysis Card -->
+            
             <div class="glass-card rounded-2xl p-6 lg:col-span-1 space-y-4 flex flex-col justify-between">
                 <div>
                     <div class="flex items-center space-x-2 border-b border-gray-200 pb-3 mb-4">
@@ -281,7 +281,7 @@
                 </div>
             </div>
 
-            <!-- Data Table Section -->
+            
             <div class="glass-card rounded-2xl p-6 lg:col-span-2 space-y-4 flex flex-col justify-between">
                 <div>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-200 pb-3">
@@ -294,7 +294,7 @@
                         </span>
                     </div>
 
-                    <!-- Scrollable Table -->
+                    
                     <div class="overflow-x-auto mt-4 max-h-[380px] rounded-xl border border-gray-200 shadow-inner">
                         <table class="w-full text-left border-collapse text-xs md:text-sm">
                             <thead class="bg-gray-100 text-gray-700 uppercase font-bold sticky top-0 backdrop-blur-md bg-opacity-90">
@@ -306,7 +306,7 @@
                                 </tr>
                             </thead>
                             <tbody id="price-table-body" class="divide-y divide-gray-200 font-medium">
-                                <!-- Dynamic Rows -->
+                                
                             </tbody>
                         </table>
                     </div>
@@ -317,12 +317,12 @@
 
     </div>
 
-    <!-- Footer -->
+    
     <footer class="mt-8 text-center text-xs text-white/80 font-medium">
-        <p>©️ 2025 - 2026 Doğalgaz Dağıtım Şirketleri Fiyat Analiz Sistemi | Gaziantep, Kilis, Kocaeli Plg, Kocaeli İzg, Kırklareli, Edirne, Tekirdağ, Erzurum</p>
+        <p> Sürüm 1.2 </p>
     </footer>
 
-    <!-- JavaScript Application Code (Fetch JSON) -->
+    
     <script>
         const COMPANIES = [
             "Gaziantep",
@@ -345,7 +345,7 @@
         let dbData = {};
         let ENERGY_PRICES = {};
 
-        // DOM elements
+        
         const companySelect = document.getElementById('companySelect');
         const startYearSelect = document.getElementById('startYear');
         const startMonthSelect = document.getElementById('startMonth');
@@ -407,7 +407,7 @@
             return prefix + '%' + val.toFixed(2);
         }
 
-        // prices.json dosyasını çekip verileri işleyen asenkron fonksiyon
+        
         async function loadPricesAndInit() {
             try {
                 const response = await fetch('prices.json?t=' + new Date().getTime());
