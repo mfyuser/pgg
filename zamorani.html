@@ -11,9 +11,6 @@
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Merkezi Fiyat Dosyamız -->
-    <script src="prices.js"></script>
-
     <script>
         tailwind.config = {
             theme: {
@@ -325,9 +322,8 @@
         <p>©️ 2025 - 2026 Doğalgaz Dağıtım Şirketleri Fiyat Analiz Sistemi | Gaziantep, Kilis, Kocaeli Plg, Kocaeli İzg, Kırklareli, Edirne, Tekirdağ, Erzurum</p>
     </footer>
 
-    <!-- JavaScript Application Code -->
+    <!-- JavaScript Application Code (Fetch JSON) -->
     <script>
-        // Senin istediğin 8 ilin listesi
         const COMPANIES = [
             "Gaziantep",
             "Kilis",
@@ -344,45 +340,10 @@
             "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
         ];
 
-        const YEARS = [2025, 2026]; // 2025 ve 2026 yılları
+        const YEARS = [2025, 2026];
 
-       // Verileri prices.js dosyasından (ENERGY_PRICES) otomatik çeken kısım
-        const dbData = {};
-
-        COMPANIES.forEach(company => {
-            dbData[company] = [];
-            
-            YEARS.forEach(year => {
-                MONTH_NAMES.forEach((month, mIndex) => {
-                    const monthNumber = mIndex + 1;
-                    
-                    let k1Val = 0.0000;
-                    let k2Val = 0.0000;
-
-                    // Ay numarasını 2 haneli stringe çeviriyoruz (Örn: 6 -> "06")
-                    const monthKey = monthNumber < 10 ? "0" + monthNumber : "" + monthNumber;
-
-                    // prices.js içinde veri var mı diye bakar, varsa çeker
-                    if (
-                        window.ENERGY_PRICES && 
-                        ENERGY_PRICES[company] && 
-                        ENERGY_PRICES[company][year] && 
-                        ENERGY_PRICES[company][year][monthKey]
-                    ) {
-                        k1Val = ENERGY_PRICES[company][year][monthKey].k1;
-                        k2Val = ENERGY_PRICES[company][year][monthKey].k2;
-                    }
-
-                    dbData[company].push({
-                        year: year,
-                        monthIndex: monthNumber,
-                        monthName: month,
-                        k1: k1Val,
-                        k2: k2Val
-                    });
-                });
-            });
-        });
+        let dbData = {};
+        let ENERGY_PRICES = {};
 
         // DOM elements
         const companySelect = document.getElementById('companySelect');
@@ -395,7 +356,6 @@
         const errorBanner = document.getElementById('error-banner');
         const errorMessage = document.getElementById('error-message');
 
-        // Results UI elements
         const k1Rate = document.getElementById('k1-rate');
         const k1DiffText = document.getElementById('k1-diff-text');
         const k1StartVal = document.getElementById('k1-start-val');
@@ -421,40 +381,77 @@
         const tableTitle = document.getElementById('table-title');
         const priceTableBody = document.getElementById('price-table-body');
 
-        // Initialize Dropdowns
         function initDropdowns() {
-            // Companies
             companySelect.innerHTML = COMPANIES.map(c => `<option value="${c}">${c}</option>`).join('');
 
-            // Years
             const yearOptions = YEARS.map(y => `<option value="${y}">${y}</option>`).join('');
             startYearSelect.innerHTML = yearOptions;
             endYearSelect.innerHTML = yearOptions;
 
-            // Months
             const monthOptions = MONTH_NAMES.map((m, idx) => `<option value="${idx + 1}">${idx + 1} - ${m}</option>`).join('');
             startMonthSelect.innerHTML = monthOptions;
             endMonthSelect.innerHTML = monthOptions;
 
-            // Set default values: Start: 2025 Jan, End: 2026 Dec
             startYearSelect.value = 2025;
             startMonthSelect.value = 1;
             endYearSelect.value = 2026;
             endMonthSelect.value = 12;
         }
 
-        // Helper to format currency
         function formatTL(val) {
             return val.toFixed(4) + ' TL';
         }
 
-        // Helper to format percentage
         function formatPercent(val) {
             const prefix = val >= 0 ? '+' : '';
             return prefix + '%' + val.toFixed(2);
         }
 
-        // Core calculation & render function
+        // prices.json dosyasını çekip verileri işleyen asenkron fonksiyon
+        async function loadPricesAndInit() {
+            try {
+                const response = await fetch('prices.json?t=' + new Date().getTime());
+                ENERGY_PRICES = await response.json();
+            } catch (error) {
+                console.error("Fiyatlar yüklenemedi:", error);
+                ENERGY_PRICES = {};
+            }
+
+            COMPANIES.forEach(company => {
+                dbData[company] = [];
+                
+                YEARS.forEach(year => {
+                    MONTH_NAMES.forEach((month, mIndex) => {
+                        const monthNumber = mIndex + 1;
+                        let k1Val = 0.0000;
+                        let k2Val = 0.0000;
+
+                        const monthKey = monthNumber < 10 ? "0" + monthNumber : "" + monthNumber;
+
+                        if (
+                            ENERGY_PRICES[company] && 
+                            ENERGY_PRICES[company][year] && 
+                            ENERGY_PRICES[company][year][monthKey]
+                        ) {
+                            k1Val = ENERGY_PRICES[company][year][monthKey].k1;
+                            k2Val = ENERGY_PRICES[company][year][monthKey].k2;
+                        }
+
+                        dbData[company].push({
+                            year: year,
+                            monthIndex: monthNumber,
+                            monthName: month,
+                            k1: k1Val,
+                            k2: k2Val
+                        });
+                    });
+                });
+            });
+
+            initDropdowns();
+            calculateAndRender();
+        }
+
         function calculateAndRender() {
             const company = companySelect.value;
             const startY = parseInt(startYearSelect.value);
@@ -462,12 +459,13 @@
             const endY = parseInt(endYearSelect.value);
             const endM = parseInt(endMonthSelect.value);
 
+            if (!dbData[company]) return;
+
             selectedCompanyBadge.innerText = company;
             tableTitle.innerText = `${company} Aylık Fiyat Tablosu`;
 
             const companyRecords = dbData[company];
 
-            // Validation: Start period must be <= End period
             const startIndex = companyRecords.findIndex(r => r.year === startY && r.monthIndex === startM);
             const endIndex = companyRecords.findIndex(r => r.year === endY && r.monthIndex === endM);
 
@@ -482,28 +480,21 @@
             const startData = companyRecords[startIndex];
             const endData = companyRecords[endIndex];
 
-            // Calculations
-            // Kademe 1 Zam Oranı
             const k1Diff = endData.k1 - startData.k1;
             const k1IncreasePct = startData.k1 === 0 ? 0 : (k1Diff / startData.k1) * 100;
 
-            // Kademe 2 Zam Oranı
             const k2Diff = endData.k2 - startData.k2;
             const k2IncreasePct = startData.k2 === 0 ? 0 : (k2Diff / startData.k2) * 100;
 
-            // Kademe 1 vs Kademe 2 initial ratio & diff
             const startK2K1Diff = startData.k2 - startData.k1;
             const startK2K1Pct = startData.k1 === 0 ? 0 : (startK2K1Diff / startData.k1) * 100;
 
-            // Kademe 1 vs Kademe 2 end ratio & diff
             const endK2K1Diff = endData.k2 - endData.k1;
             const endK2K1Pct = endData.k1 === 0 ? 0 : (endK2K1Diff / endData.k1) * 100;
 
-            // Multipliers
             const startMultVal = startData.k1 === 0 ? '1.00' : (startData.k2 / startData.k1).toFixed(2);
             const endMultVal = endData.k1 === 0 ? '1.00' : (endData.k2 / endData.k1).toFixed(2);
 
-            // Update UI KPI Cards
             k1Rate.innerText = formatPercent(k1IncreasePct);
             k1DiffText.innerText = `${k1Diff >= 0 ? '+' : ''}${k1Diff.toFixed(4)} TL / m³ artış`;
             k1StartVal.innerText = formatTL(startData.k1);
@@ -520,13 +511,11 @@
             endK1K2Ratio.innerText = `%${endK2K1Pct.toFixed(2)}`;
             endK1K2Diff.innerText = formatTL(endK2K1Diff);
 
-            // Update Detail Breakdown
             detailK1Change.innerText = formatPercent(k1IncreasePct);
             detailK2Change.innerText = formatPercent(k2IncreasePct);
             startMultiplier.innerText = `${startMultVal}x`;
             endMultiplier.innerText = `${endMultVal}x`;
 
-            // Evaluation Text Logic
             if (k1IncreasePct > k2IncreasePct) {
                 summaryEvaluation.innerText = `İncelenen dönemde Kademe 1 fiyat artışı (%${k1IncreasePct.toFixed(2)}), Kademe 2 fiyat artışından (%${k2IncreasePct.toFixed(2)}) daha yüksek gerçekleşmiştir. Kademeler arası makas daralmıştır.`;
             } else if (k2IncreasePct > k1IncreasePct) {
@@ -535,11 +524,9 @@
                 summaryEvaluation.innerText = `Her iki kademede de oransal olarak eşit miktarda (%${k1IncreasePct.toFixed(2)}) artış uygulanmış, kademeler arası oran korunmuştur.`;
             }
 
-            // Render Table
             renderTable(companyRecords, startIndex, endIndex);
         }
 
-        // Render Table Rows with Range Highlight
         function renderTable(records, startIndex, endIndex) {
             priceTableBody.innerHTML = records.map((rec, idx) => {
                 const isSelectedRange = idx >= startIndex && idx <= endIndex;
@@ -569,15 +556,12 @@
             }).join('');
         }
 
-        // Event Listeners
         [companySelect, startYearSelect, startMonthSelect, endYearSelect, endMonthSelect].forEach(element => {
             element.addEventListener('change', calculateAndRender);
         });
 
-        // Initialize on Load
         window.onload = function() {
-            initDropdowns();
-            calculateAndRender();
+            loadPricesAndInit();
         };
     </script>
 </body>
