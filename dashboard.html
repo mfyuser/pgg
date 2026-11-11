@@ -2,277 +2,337 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PGG - Kolay Erişim</title>
+
 <style>
-   * {
-     box-sizing: border-box;
-     margin: 0;
-     padding: 0;
-     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-   }
-   body {
-     background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
-     color: #1e293b;
-     min-height: 100vh;
-     padding: 32px;
-     display: flex;
-     flex-direction: column;
-     gap: 32px;
-   }
-   .top-header {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     gap: 20px;
-     width: 100%;
-   }
-   .announcement-box {
-     background: #ffffff;
-     backdrop-filter: blur(12px);
-     border: 1px solid rgba(255, 255, 255, 0.08);
-     border-left: 4px solid #38bdf8;
-     border-radius: 12px;
-     padding: 14px 20px;
-     font-size: 0.95rem;
-     flex: 1;
-   }
-   .datetime-box {
-     background: rgba(15, 23, 42, 0.7);
-     backdrop-filter: blur(12px);
-     border: 1px solid rgba(255, 255, 255, 0.1);
-     padding: 12px 20px;
-     border-radius: 12px;
-     font-weight: 600;
-     color: #38bdf8;
-     font-size: 0.9rem;
-     white-space: nowrap;
-     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-   }
-   .section-title {
-     font-size: 1.25rem;
-     font-weight: 600;
-     color: #1e293b;
-     letter-spacing: 0.5px;
-     margin-bottom: 16px;
-     display: flex;
-     align-items: center;
-     gap: 10px;
-   }
-   .section-title::before {
-     content: '';
-     display: inline-block;
-     width: 8px;
-     height: 18px;
-     background: #38bdf8;
-     border-radius: 4px;
-   }
-   .dashboard-container {
-     display: flex;
-     flex-direction: column;
-     gap: 36px;
-     width: 100%;
-     max-width: 1400px;
-     margin: 0 auto;
-   }
-   .modules-grid {
-     display: grid;
-     grid-template-columns: repeat(4, 1fr);
-     gap: 20px;
-     width: 100%;
-   }
-   .module-card {
-     background: #ffffff;
-     backdrop-filter: blur(12px);
-     border: 1px solid rgba(255, 255, 255, 0.06);
-     border-radius: 14px;
-     height: 90px;
-     padding: 16px;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     text-decoration: none;
-     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-   }
-.module-card img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    margin: auto;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
 }
-   .module-card:hover {
-     transform: translateY(-4px);
-     border-color: rgba(56, 189, 248, 0.4);
-     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
-   }
-   .module-card-title {
-     font-size: 1.05rem;
-     font-weight: 600;
-     color: #93c5fd;
-     padding-bottom: 12px;
-     margin-bottom: 16px;
-     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-   }
-   /* 5'li Borç Sorgulama (Logo) Grid Yapısı */
-   .companies-grid {
-     display: grid;
-     grid-template-columns: repeat(5, 1fr);
-     gap: 20px;
-     width: 100%;
-   }
-   .company-card {
-     background: #ffffff;
-     backdrop-filter: blur(12px);
-     border: 1px solid rgba(255, 255, 255, 0.06);
-     border-radius: 14px;
-     height: 90px;
-     padding: 16px;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     text-decoration: none;
-     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-   }
-   .company-card:hover {
-     background: rgba(255, 255, 255, 0.06);
-     border-color: rgba(56, 189, 248, 0.3);
-     transform: translateY(-2px);
-     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-   }
-   .company-card img {
-     max-width: 85%;
-     max-height: 85%;
-     object-fit: contain;
-     filter: brightness(0.9) grayscale(0.1);
-     transition: filter 0.2s ease;
-   }
-   .company-card:hover img {
-     filter: brightness(1) grayscale(0);
-   }
+
+body{
+    background:linear-gradient(
+        135deg,
+        #7f1d1d 0%,
+        #b91c1c 50%,
+        #dc2626 100%
+    );
+    min-height:100vh;
+    padding:32px;
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+    position:relative;
+}
+
+body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,.15), transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(255,255,255,.12), transparent 30%);
+    pointer-events:none;
+}
+
+.top-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+}
+
+.announcement-box{
+    flex:1;
+    background:rgba(255,255,255,0.18);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,0.25);
+    border-left:5px solid #ffffff;
+    border-radius:18px;
+    padding:18px 24px;
+    color:white;
+    font-weight:500;
+}
+
+.datetime-box{
+    background:rgba(255,255,255,0.18);
+    backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,0.25);
+    color:#fff;
+    padding:14px 22px;
+    border-radius:18px;
+    font-weight:700;
+    white-space:nowrap;
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+.dashboard-container{
+    max-width:1500px;
+    width:100%;
+    margin:auto;
+    padding:30px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(25px);
+    border-radius:28px;
+    border:1px solid rgba(255,255,255,0.15);
+    display:flex;
+    flex-direction:column;
+    gap:40px;
+}
+
+.section-title{
+    font-size:1.4rem;
+    font-weight:700;
+    color:#fff;
+    margin-bottom:20px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.section-title::before{
+    content:'';
+    width:8px;
+    height:22px;
+    background:#fff;
+    border-radius:10px;
+}
+
+.modules-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:22px;
+}
+
+.module-card{
+    background:rgba(255,255,255,0.20);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:20px;
+    min-height:160px;
+    text-decoration:none;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    transition:.30s;
+}
+
+.module-card:hover{
+    transform:translateY(-6px);
+    background:rgba(255,255,255,0.28);
+    border-color:rgba(255,255,255,0.55);
+    box-shadow:0 15px 35px rgba(0,0,0,.20);
+}
+
+.module-card-title{
+    color:#fff;
+    font-size:1rem;
+    font-weight:700;
+    text-align:center;
+    line-height:1.4;
+}
+
+.module-card img{
+    width:70px;
+    height:70px;
+    object-fit:contain;
+    transition:.3s;
+}
+
+.module-card:hover img{
+    transform:scale(1.08);
+}
+
+.companies-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:20px;
+}
+
+.company-card{
+    background:rgba(255,255,255,0.18);
+    backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,0.25);
+    border-radius:20px;
+    height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:.3s;
+    text-decoration:none;
+}
+
+.company-card:hover{
+    transform:translateY(-5px);
+    background:rgba(255,255,255,0.28);
+    border-color:rgba(255,255,255,0.50);
+    box-shadow:0 15px 35px rgba(0,0,0,.20);
+}
+
+.company-card img{
+    max-width:85%;
+    max-height:85%;
+    object-fit:contain;
+    transition:.3s;
+}
+
+.company-card:hover img{
+    transform:scale(1.08);
+}
+
+@media(max-width:1100px){
+
+    .companies-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+
+@media(max-width:768px){
+
+    body{
+        padding:16px;
+    }
+
+    .top-header{
+        flex-direction:column;
+    }
+
+    .companies-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .datetime-box{
+        width:100%;
+        text-align:center;
+    }
+}
+
+@media(max-width:500px){
+
+    .companies-grid{
+        grid-template-columns:1fr;
+    }
+}
 </style>
 </head>
+
 <body>
+
 <header class="top-header">
-<div class="announcement-box">
-<strong>•</strong> Sürüm Notları ....
-</div>
-<div class="datetime-box" id="datetime"></div>
-</header>
-<div class="dashboard-container">
-<section>
-<h2 class="section-title">Modüller</h2>
-<div class="modules-grid">
-
-    <a href="https://mfyuser.github.io/pgg/gecikmefaiziv1.html"
-       target="_blank"
-       class="module-card">
-        <div class="module-card-title">
-            Gecikme Bedeli Hesaplama
-        </div>
-        <img src="https://cdn.pixabay.com/photo/2022/07/05/18/16/fire-7303709_960_720.png"
-             alt="Gecikme">
-    </a>
-
-    <a href="https://mfyuser.github.io/pgg/kademe.html"
-      target="_blank"
-      class="module-card">
-        <div class="module-card-title">
-            Kademeli Tarife Hesaplama
-        </div>
-        <img src="https://png.pngtree.com/png-clipart/20250428/original/pngtree-bill-paper-png-image_20882692.png"
-             alt="Kademe">
-    </a>
-  
-    <a href="https://mfyuser.github.io/pgg/iban.html"
-      target="_blank"
-      class="module-card">
-        <div class="module-card-title">
-            İban Çözümleme
-        </div>
-        <img src="https://play-lh.googleusercontent.com/6BXXSKJkBr__NXI6rLhR4Ld2l02LD1wrzHUIWBKQAKax6uEiaxxcO8_rz9enAuzQ5MPq0WtKrBwD6cH3Rkh3qQ"
-             alt="iban">
-    </a>
-
-      <a href="https://mfyuser.github.io/pgg/zamorani.html"
-      target="_blank"
-      class="module-card">
-        <div class="module-card-title">
-            Zam Oranı Hesaplama
-        </div>
-        <img src="https://cdn.pixabay.com/photo/2022/07/21/11/48/fire-7336074_1280.png"
-             alt="Zam">
-    </a>
-  
-</div>
-</section>
-<section>
-    <h2 class="section-title">Borç Sorgulama</h2>
-
-    <div class="companies-grid">
-
-        <a href="https://odeme.com.tr/fatura/dogalgaz/GAZDAS"
-           target="_blank"
-           class="company-card">
-            <img src="https://gazdasgaziantep.com.tr/wp-content/uploads/2022/12/gazdas-gaziantep-logo.png"
-                 alt="Gazdaş">
-        </a>
-
-        <a href="https://odeme.com.tr/fatura/dogalgaz/TRAKYAGAZ"
-           target="_blank"
-           class="company-card">
-            <img src="https://online.gazdastrakya.com.tr/img/logo-yeni.png"
-                 alt="Trakyagaz">
-        </a>
-
-        <a href="https://odeme.com.tr/fatura/dogalgaz/IZMITGAZ"
-           target="_blank"
-           class="company-card">
-            <img src="https://www.izgaz.com.tr/wp-content/uploads/2022/12/izgaz-logo-duzenlenmis-footer-1.png"
-                 alt="zgaz">
-        </a>
-
-        <a href="https://odeme.com.tr/fatura/dogalgaz/PALGAZ"
-           target="_blank"
-           class="company-card">
-            <img src="https://online.palgaz.com.tr/img/palgaz-logo.png"
-                 alt="Palgaz">
-        </a>
-
-        <a href="https://odeme.com.tr/fatura/dogalgaz/PALENGAZ"
-           target="_blank"
-           class="company-card">
-            <img src="https://www.palen.com.tr/wp-content/uploads/2022/12/palen-logo.png"
-                 alt="Palen">
-        </a>
-
+    <div class="announcement-box">
+        <strong>📢 Duyuru:</strong> Sürüm Notları ....
     </div>
-</section>
+
+    <div class="datetime-box" id="datetime"></div>
+</header>
+
+<div class="dashboard-container">
+
+    <section>
+        <h2 class="section-title">Modüller</h2>
+
+        <div class="modules-grid">
+
+            <a href="https://mfyuser.github.io/pgg/gecikmefaiziv1.html" target="_blank" class="module-card">
+                <div class="module-card-title">
+                    Gecikme Bedeli Hesaplama
+                </div>
+                <img src="https://cdn.pixabay.com/photo/2022/07/05/18/16/fire-7303709\_960\_720.png">
+            </a>
+
+            <a href="https://mfyuser.github.io/pgg/kademe.html" target="_blank" class="module-card">
+                <div class="module-card-title">
+                    Kademeli Tarife Hesaplama
+                </div>
+                <img src="https://png.pngtree.com/png-clipart/20250428/original/pngtree-bill-paper-png-image\_20882692.png">
+            </a>
+
+            <a href="https://mfyuser.github.io/pgg/iban.html" target="_blank" class="module-card">
+                <div class="module-card-title">
+                    İban Çözümleme
+                </div>
+                <img src="https://play-lh.googleusercontent.com/6BXXSKJkBr\_\_NXI6rLhR4Ld2l02LD1wrzHUIWBKQAKax6uEiaxxcO8\_rz9enAuzQ5MPq0WtKrBwD6cH3Rkh3qQ">
+            </a>
+
+            <a href="https://mfyuser.github.io/pgg/zamorani.html" target="_blank" class="module-card">
+                <div class="module-card-title">
+                    Zam Oranı Hesaplama
+                </div>
+                <img src="https://cdn.pixabay.com/photo/2022/07/21/11/48/fire-7336074\_1280.png">
+            </a>
+
+        </div>
+    </section>
+
+    <section>
+        <h2 class="section-title">Borç Sorgulama</h2>
+
+        <div class="companies-grid">
+
+            <a href="https://odeme.com.tr/fatura/dogalgaz/GAZDAS" target="_blank" class="company-card">
+                <img src="https://gazdasgaziantep.com.tr/wp-content/uploads/2022/12/gazdas-gaziantep-logo.png">
+            </a>
+
+            <a href="https://odeme.com.tr/fatura/dogalgaz/TRAKYAGAZ" target="_blank" class="company-card">
+                <img src="https://online.gazdastrakya.com.tr/img/logo-yeni.png">
+            </a>
+
+            <a href="https://odeme.com.tr/fatura/dogalgaz/IZMITGAZ" target="_blank" class="company-card">
+                <img src="https://www.izgaz.com.tr/wp-content/uploads/2022/12/izgaz-logo-duzenlenmis-footer-1.png">
+            </a>
+
+            <a href="https://odeme.com.tr/fatura/dogalgaz/PALGAZ" target="_blank" class="company-card">
+                <img src="https://online.palgaz.com.tr/img/palgaz-logo.png">
+            </a>
+
+            <a href="https://odeme.com.tr/fatura/dogalgaz/PALENGAZ" target="_blank" class="company-card">
+                <img src="https://www.palen.com.tr/wp-content/uploads/2022/12/palen-logo.png">
+            </a>
+
+        </div>
+    </section>
+
 </div>
-  <script>
-   const API_URL = '/api/settings';
-   document.addEventListener("DOMContentLoaded", async () => {
-     try {
-       const response = await fetch(API_URL);
-       const data = await response.json();
-       if (data.announcement) {
-         document.querySelector('.announcement-box').innerHTML =
-           `<strong>Duyuru:</strong> ${data.announcement}`;
-       }
-       const companyCards = document.querySelectorAll('.company-card');
-       if (data.companies && data.companies.length > 0) {
-         data.companies.forEach((company, index) => {
-           if (companyCards[index]) {
-             companyCards[index].href = company.link;
-             companyCards[index].querySelector('img').src = company.logo;
-           }
-         });
-       }
-     } catch (error) {
-       console.error(error);
-     }
-   });
-</script>
-  <script>
+
+<script>
+const API_URL = '/api/settings';
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+
+        if (data.announcement) {
+            document.querySelector('.announcement-box').innerHTML =
+                `<strong>📢 Duyuru:</strong> ${data.announcement}`;
+        }
+
+        const companyCards = document.querySelectorAll('.company-card');
+
+        if (data.companies && data.companies.length > 0) {
+            data.companies.forEach((company, index) => {
+                if (companyCards[index]) {
+                    companyCards[index].href = company.link;
+                    companyCards[index].querySelector('img').src = company.logo;
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error(error);
+    }
+});
+
 function updateDateTime() {
+
     const now = new Date();
 
     const date = now.toLocaleDateString("tr-TR", {
@@ -294,7 +354,6 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 1000);
 </script>
-</body>
-</html>
+
 </body>
 </html>
