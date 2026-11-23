@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuyruk Performans Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--glass:rgba(255,255,255,.55);--bd:rgba(255,255,255,.85);--tx:#0b2a5b;--mu:#4a6491;--b1:#2563eb;--b2:#38bdf8;--b3:#1e3a8a}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;color:var(--tx);background:linear-gradient(135deg,#e0f2fe,#f8fbff 45%,#bfdbfe);background-attachment:fixed;overflow-x:hidden}
+body::before,body::after{content:"";position:fixed;width:44vmax;height:44vmax;border-radius:50%;filter:blur(90px);z-index:-1}
+body::before{background:#7dd3fc;opacity:.6;top:-14vmax;left:-10vmax}
+body::after{background:#93a8ff;opacity:.5;bottom:-16vmax;right:-10vmax}
+.glass{background:var(--glass);border:1px solid var(--bd);border-radius:20px;backdrop-filter:blur(20px) saturate(170%);-webkit-backdrop-filter:blur(20px) saturate(170%);box-shadow:0 8px 30px rgba(37,99,235,.14)}
+.wrap{max-width:1600px;margin:0 auto;padding:16px}
+#upload{min-height:90vh;display:flex;align-items:center;justify-content:center}
+.drop{padding:56px 48px;text-align:center;max-width:520px;cursor:pointer;transition:.2s;display:block}
+.drop:hover,.drop.on{transform:scale(1.02);background:rgba(255,255,255,.8)}
+.drop .ic{font-size:56px}
+.drop h1{margin:10px 0 6px;font-size:26px}
+.drop p{color:var(--mu);margin:0 0 18px}
+.btn{display:inline-block;background:linear-gradient(135deg,var(--b1),var(--b2));color:#fff;padding:10px 20px;border-radius:12px;font-weight:600;font-size:14px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;margin-bottom:12px}
+header h2{margin:0;font-size:22px}
+header small{color:var(--mu)}
+.tabs{display:flex;gap:6px;padding:5px;border-radius:14px;background:rgba(255,255,255,.6);border:1px solid var(--bd)}
+.tabs button{border:0;background:transparent;color:var(--mu);padding:9px 16px;border-radius:10px;font-weight:600;cursor:pointer;font-size:14px}
+.tabs button.act{background:linear-gradient(135deg,var(--b1),var(--b2));color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.35)}
+.ghost{background:rgba(255,255,255,.7);border:1px solid var(--bd);color:var(--b3);padding:9px 14px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:600}
+.kpis{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:12px}
+.kpi{padding:14px 16px;position:relative;overflow:hidden}
+.kpi::before{content:"";position:absolute;left:0;top:0;right:0;height:4px;background:var(--k)}
+.kpi span{font-size:11px;color:var(--mu);text-transform:uppercase;letter-spacing:.6px;font-weight:600}
+.kpi b{display:block;font-size:26px;margin:6px 0 2px;color:var(--b3)}
+.kpi em{display:block;font-style:normal;font-size:12px;color:var(--mu);line-height:1.5}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.card{padding:16px 18px}
+.card h3{margin:0 0 8px;font-size:15px}
+.cv{height:290px;position:relative}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:1350px}
+th{font-size:10.5px;color:var(--mu);text-align:right;padding:8px 8px;font-weight:700;background:rgba(37,99,235,.08);vertical-align:bottom}
+td{padding:9px 8px;text-align:right;border-top:1px solid rgba(37,99,235,.12);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:nowrap;font-weight:600}
+tbody tr:hover{background:rgba(255,255,255,.7)}
+.tag{font-size:11px;padding:2px 8px;border-radius:8px;margin-left:6px;background:rgba(37,99,235,.12);color:var(--b1)}
+tfoot td{font-weight:700;border-top:2px solid rgba(37,99,235,.3);background:rgba(37,99,235,.06)}
+@media(max-width:1250px){.kpis{grid-template-columns:repeat(4,1fr)}.charts{grid-template-columns:1fr}}
+@media(max-width:600px){.kpis{grid-template-columns:repeat(2,1fr)}.kpi b{font-size:22px}}
+@media print{.ghost,.tabs{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div id="upload"><label class="glass drop" id="drop">
+<div class="ic">📞</div><h1>KPR</h1>
+<p>                                                           </p>
+<span class="btn">Tık tık</span>
+<input id="file" type="file" accept=".xlsx,.xls" hidden></label></div>
+
+<div id="dash" hidden>
+<header class="glass">
+ <div><h2>📞 Kuyruk Çağrı Performansı</h2><small id="fname"></small></div>
+ <div class="tabs" id="tabs">
+  <button data-f="all" class="act">Tümü</button>
+  <button data-f="mh">Müşteri Hizmetleri</button>
+  <button data-f="acil">Acil</button>
+ </div>
+ <div><button class="ghost" onclick="window.print()">PDF</button>
+ <button class="ghost" id="again">Sıfırla</button></div>
+</header>
+<div class="kpis" id="kpis"></div>
+<div class="charts">
+ <div class="glass card"><h3>Kuyruk Bazlı Çağrı Dağılımı</h3><div class="cv"><canvas id="c1"></canvas></div></div>
+ <div class="glass card"><h3>Ulaşılabilirlik &amp; Servis Seviyesi (%)</h3><div class="cv"><canvas id="c2"></canvas></div></div>
+</div>
+<div class="glass card"><h3>İstatistik <span class="tag" id="cnt"></span></h3>
+ <div class="tw"><table><thead><tr><th>Kuyruk</th><th>Gelen Aramalar</th><th>Cevaplanmış</th><th>Kaçan</th><th>Kaçan geri dönüş</th><th>Servis Seviyesi</th><th>Konuşma Süresi</th><th>Ortalama Konuşma</th><th>Toplam Kuyrukta Bekleme Süresi</th><th>Kuyrukta Ortalama Bekleme</th><th>Toplam Süre</th><th>Giden Aramalar</th><th>Giden (Cevapsız)</th><th>Giden Arama Süresi</th><th>Başvuruya Dönüşen Çağrı Sayısı</th></tr></thead><tbody id="tb"></tbody><tfoot id="tf"></tfoot></table></div>
+</div>
+</div>
+</div>
+<script>
+const MHn=["gazdaş gaziantep çağrı merkezi","gazdaş trakya çağrı merkezi","izgaz çağrı merkezi","palgaz çağrı merkezi","palen çağrı merkezi"].map(s=>s.toLocaleLowerCase("tr"));
+const norm=s=>String(s||"").toLocaleLowerCase("tr").trim();
+let rows=[],hepsi=null,filter="all",ch1,ch2;
+const $=id=>document.getElementById(id);
+function sec(v){
+ if(typeof v==="number")return Math.round(v*86400);
+ if(!v)return 0;
+ let s=String(v),d=0,m=s.match(/(\d+)\s*day[s]?,?\s*/i);
+ if(m){d=+m[1];s=s.replace(m[0],"")}
+ const p=s.split(":").map(Number);while(p.length<3)p.unshift(0);
+ return d*86400+p[0]*3600+p[1]*60+p[2];
+}
+const hms=t=>{t=Math.round(t);return [Math.floor(t/3600),Math.floor(t%3600/60),t%60].map(x=>String(x).padStart(2,"0")).join(":")};
+const ms=t=>{t=Math.round(t);return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")};
+const n=v=>Number(v)||0;
+const fmt=v=>Math.round(v).toLocaleString("tr-TR");
+const tr2=v=>(Math.floor(v*100+1e-9)/100).toLocaleString("tr-TR",{maximumFractionDigits:2});
+const pc=v=>"%"+tr2(v);
+const dec=v=>v.toLocaleString("tr-TR",{maximumFractionDigits:10});
+
+function rec(r,I){
+ const g=n(r[I.g]);
+ return {q:String(r[I.q]).trim(),g,c:n(r[I.c]),k:n(r[I.k]),kg:n(r[I.kg]),sl:n(r[I.sl]),ks:sec(r[I.ks]),ok:sec(r[I.ok]),bw:sec(r[I.bw]),ob:sec(r[I.ob]),ts:sec(r[I.ts]),gi:n(r[I.gi]),gc:n(r[I.gc]),gd:sec(r[I.gd]),bs:n(r[I.bs])};
+}
+function parse(wb,name){
+ const a=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:""});
+ const h=a[0].map(norm);
+ const ix=k=>h.indexOf(k);
+ const I={q:ix("kuyruk"),g:ix("gelen aramalar"),c:ix("cevaplanmış"),k:ix("kaçan"),kg:ix("kaçan geri dönüş"),sl:ix("servis seviyesi"),ks:ix("konuşma süresi"),ok:ix("ortalama konuşma"),bw:ix("toplam kuyrukta bekleme süresi"),ob:ix("kuyrukta ortalama bekleme"),ts:ix("toplam süre"),gi:ix("giden aramalar"),gc:ix("giden (cevapsız)"),gd:ix("giden arama süresi"),bs:ix("başvuruya dönüşen çağrı sayısı")};
+ rows=[];hepsi=null;
+ a.slice(1).forEach(r=>{
+  const q=String(r[I.q]||"").trim();if(!q)return;
+  if(norm(q)==="hepsi"){hepsi=rec(r,I);return}
+  if(n(r[I.g])===0)return; // 0 değerli kuyruklar dışlanır
+  const o=rec(r,I);o.grp=q.includes("187")?"acil":(MHn.includes(norm(q))?"mh":"diger");rows.push(o);
+ });
+ $("fname").textContent="Dosya: "+name;
+}
+function agg(list){
+ const s={g:0,c:0,k:0,kg:0,ks:0,bw:0,ts:0,gi:0,gc:0,gd:0,bs:0,sw:0};
+ list.forEach(r=>{for(const k in s)if(k!=="sw")s[k]+=r[k];s.sw+=r.sl*r.g});
+ s.u=s.g?s.c/s.g*100:0;s.sl=s.g?s.sw/s.g:0;
+ s.ok=s.c?s.ks/s.c:0;s.ob=s.g?s.bw/s.g:0;return s;
+}
+function render(){
+ const list=rows.filter(r=>filter==="all"||r.grp===filter).sort((a,b)=>b.g-a.g);
+ const s=agg(list);
+ const K=[["Toplam Gelen Çağrı",fmt(s.g),list.length+" aktif kuyruk","#2563eb"],
+ ["Cevaplanan",fmt(s.c),"Cevaplanan ÷ Gelen","#38bdf8"],
+ ["Ulaşılabilirlik",pc(s.u),"Kaçan oranı "+pc(s.g?s.k/s.g*100:0),"#1e3a8a"],
+ ["Kaçan / Geri Dönüş",fmt(s.k)+" / "+fmt(s.kg),"Geri dönüş "+pc(s.k?s.kg/s.k*100:0),"#f87171"],
+ ["Servis Seviyesi",pc(s.sl),"Gelen ağırlıklı ortalama","#0ea5e9"],
+ ["Ort. Konuşma / Bekleme",ms(s.ok)+" / "+ms(s.ob),"Toplam konuşma "+hms(s.ks),"#6366f1"],
+ ["Giden Aramalar",fmt(s.gi),"Cevapsız: "+fmt(s.gc)+"<br>Süre: "+hms(s.gd),"#14b8a6"]];
+ $("kpis").innerHTML=K.map(k=>`<div class="glass kpi" style="--k:${k[3]}"><span>${k[0]}</span><b>${k[1]}</b><em>${k[2]}</em></div>`).join("");
+ $("cnt").textContent=list.length+" Kuyruk";
+ const tr=(r,b)=>`<td>${b?r.q:r.q}</td><td>${fmt(r.g)}</td><td>${fmt(r.c)}</td><td>${fmt(r.k)}</td><td>${fmt(r.kg)}</td><td>${r.sl==null?"-":(r.t?tr2(r.sl):dec(r.sl))}</td><td>${hms(r.ks)}</td><td>${hms(r.ok)}</td><td>${hms(r.bw)}</td><td>${hms(r.ob)}</td><td>${hms(r.ts)}</td><td>${fmt(r.gi)}</td><td>${fmt(r.gc)}</td><td>${hms(r.gd)}</td><td>${fmt(r.bs)}</td>`;
+ $("tb").innerHTML=list.map(r=>"<tr>"+tr(r)+"</tr>").join("");
+ const tot=(filter==="all"&&hepsi)?{...hepsi,sl:s.sl}:{q:"Hepsi",...s};
+ tot.q="Hepsi";tot.t=1;
+ $("tf").innerHTML="<tr>"+tr(tot)+"</tr>";
+ charts(list);
+}
+const lab={id:"lab",afterDatasetsDraw(c){const x=c.ctx;
+ c.data.datasets.forEach((d,i)=>{const m=c.getDatasetMeta(i);if(m.hidden)return;
+  m.data.forEach((e,j)=>{const t=d.lbl?d.lbl(d.data[j]):String(d.data[j]);
+   x.save();x.font="600 10.5px Segoe UI,Arial";x.fillStyle=d.lc||"#0b2a5b";
+   if(d.lp==="rot"){x.translate(e.x,e.y-5);x.rotate(-Math.PI/2);x.textAlign="left";x.textBaseline="middle";x.fillText(t,0,0)}
+   else if(d.lp==="in"){x.textAlign="center";x.textBaseline="bottom";x.fillText(t,e.x,e.base-6)}
+   else{x.textAlign="center";x.textBaseline="bottom";x.fillText(t,e.x,e.y-8)}
+   x.restore()})})}};
+function charts(list){
+ const L=list.map(r=>r.q),grid="rgba(37,99,235,.12)";
+ Chart.defaults.color="#35507e";Chart.defaults.font.family="Segoe UI,system-ui,Arial";
+ const tk={maxRotation:35,callback(v){const l=this.getLabelForValue(v);return l.length>18?l.slice(0,17)+"…":l}};
+ ch1&&ch1.destroy();ch2&&ch2.destroy();
+ ch1=new Chart($("c1"),{type:"bar",plugins:[lab],data:{labels:L,datasets:[
+  {label:"Gelen",data:list.map(r=>r.g),backgroundColor:"#2563eb",borderRadius:5,lp:"rot",lbl:fmt},
+  {label:"Cevaplanan",data:list.map(r=>r.c),backgroundColor:"#38bdf8",borderRadius:5,lp:"rot",lbl:fmt},
+  {label:"Kaçan",data:list.map(r=>r.k),backgroundColor:"#f87171",borderRadius:5,lp:"rot",lbl:fmt}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{usePointStyle:true}}},scales:{x:{grid:{display:false},ticks:tk},y:{grid:{color:grid},beginAtZero:true,grace:"18%"}}}});
+ ch2=new Chart($("c2"),{type:"bar",plugins:[lab],data:{labels:L,datasets:[
+  {type:"bar",label:"Ulaşılabilirlik",data:list.map(r=>r.g?r.c/r.g*100:0),backgroundColor:"rgba(56,189,248,.7)",borderRadius:6,lp:"in",lc:"#0b2a5b",lbl:pc},
+  {type:"line",label:"Servis Seviyesi",data:list.map(r=>r.sl),borderColor:"#1e3a8a",backgroundColor:"#fff",pointBorderColor:"#1e3a8a",pointBorderWidth:2,tension:.35,borderWidth:3,pointRadius:5,lp:"top",lc:"#1e3a8a",lbl:pc}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{usePointStyle:true}}},scales:{x:{grid:{display:false},ticks:tk},y:{grid:{color:grid},min:50,max:105,ticks:{callback:v=>v>100?"":v}}}}});
+}
+function load(f){
+ const rd=new FileReader();
+ rd.onload=e=>{try{
+  parse(XLSX.read(e.target.result,{type:"array"}),f.name);
+  $("upload").hidden=true;$("dash").hidden=false;window.scrollTo(0,0);render();
+ }catch(err){alert("Dosya okunamadı: "+err.message)}};
+ rd.readAsArrayBuffer(f);
+}
+$("file").onchange=e=>e.target.files[0]&&load(e.target.files[0]);
+const dz=$("drop");
+["dragover","dragenter"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add("on")}));
+["dragleave","drop"].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove("on")}));
+dz.addEventListener("drop",e=>e.dataTransfer.files[0]&&load(e.dataTransfer.files[0]));
+$("tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;filter=b.dataset.f;
+ document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("act",x===b));render()};
+$("again").onclick=()=>{$("dash").hidden=true;$("upload").hidden=false;$("file").value=""};
+</script>
+</body>
+</html>

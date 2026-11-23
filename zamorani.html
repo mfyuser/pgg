@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zam Oranı Hesaplama Modülü</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandRed: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#e11d48',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 40%, #991b1b 70%, #450a0a 100%);
+            min-height: 100vh;
+            color: #1f2937;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .glass-card-dark {
+            background: rgba(185, 28, 28, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            backdrop-filter: blur(8px);
+            transition: all 0.25s ease;
+        }
+
+        .glass-input:focus {
+            background: #ffffff;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+            outline: none;
+        }
+
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(220, 38, 38, 0.5);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(220, 38, 38, 0.8);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased p-4 md:p-8 min-h-screen flex flex-col justify-between">
+
+    
+    <div class="max-w-7xl mx-auto w-full space-y-6">
+
+        
+        <header class="glass-card rounded-2xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-l-8 border-brandRed-600">
+            <div class="flex items-center space-x-4">
+                <div class="w-14 h-14 bg-gradient-to-tr from-brandRed-700 to-brandRed-500 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg shadow-brandRed-900/40">
+                    <i class="fa-solid font-bold fa-fire-flame-curved"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Zam & Fiyat Değişimleri Yüzdelik Hesapla</h1>
+                    <p class="text-xs md:text-sm text-gray-600 font-medium">GENEL ALIŞ FİYATINDA ÖTV+KDV+SKB HARİÇTİR. ZAM ORANI BU ŞEKİLDE ÖLÇÜLMELİDİRR.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2 bg-red-50 text-brandRed-700 font-semibold px-4 py-2 rounded-xl border border-red-200 text-xs md:text-sm">
+                <i class="fa-solid fa-building-circle-check"></i>
+                <span id="selected-company-badge">Gaziantep</span>
+            </div>
+        </header>
+
+        
+        <section class="glass-card rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex items-center space-x-2 border-b border-red-100 pb-3">
+                <i class="fa-solid fa-sliders text-brandRed-600 text-lg"></i>
+                <h2 class="text-lg font-bold text-gray-800">Parametre ve Dönem Seçimi</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                
+                <div class="md:col-span-1 space-y-1.5">
+                    <label for="companySelect" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        <i class="fa-solid fa-industry mr-1 text-brandRed-600"></i> Şirket / İl
+                    </label>
+                    <select id="companySelect" class="glass-input w-full p-3 rounded-xl text-sm font-semibold text-gray-800">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+
+                
+                <div class="space-y-1.5">
+                    <label for="startYear" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        <i class="fa-regular fa-calendar mr-1 text-brandRed-600"></i> Başlangıç Yılı
+                    </label>
+                    <select id="startYear" class="glass-input w-full p-3 rounded-xl text-sm font-semibold text-gray-800"></select>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label for="startMonth" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        <i class="fa-regular fa-calendar-check mr-1 text-brandRed-600"></i> Başlangıç Ayı
+                    </label>
+                    <select id="startMonth" class="glass-input w-full p-3 rounded-xl text-sm font-semibold text-gray-800"></select>
+                </div>
+
+                
+                <div class="space-y-1.5">
+                    <label for="endYear" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        <i class="fa-solid fa-calendar-day mr-1 text-brandRed-600"></i> Bitiş Yılı
+                    </label>
+                    <select id="endYear" class="glass-input w-full p-3 rounded-xl text-sm font-semibold text-gray-800"></select>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label for="endMonth" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                        <i class="fa-solid fa-calendar-check mr-1 text-brandRed-600"></i> Bitiş Ayı
+                    </label>
+                    <select id="endMonth" class="glass-input w-full p-3 rounded-xl text-sm font-semibold text-gray-800"></select>
+                </div>
+            </div>
+
+            
+            <div id="error-banner" class="hidden p-3 rounded-xl bg-red-100 border border-red-300 text-red-700 text-xs font-medium flex items-center space-x-2">
+                <i class="fa-solid fa-triangle-exclamation text-base"></i>
+                <span id="error-message">Başlangıç dönemi bitiş döneminden sonra olamaz!</span>
+            </div>
+        </section>
+
+        
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+            
+            <div class="glass-card rounded-2xl p-5 border-t-4 border-brandRed-600 relative overflow-hidden flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Kademe 1 Zam Oranı</span>
+                        <span class="p-2 bg-red-100 rounded-lg text-brandRed-600 text-xs"><i class="fa-solid fa-arrow-trend-up"></i></span>
+                    </div>
+                    <div class="text-3xl font-black text-brandRed-700 my-1" id="k1-rate">%0.00</div>
+                    <p class="text-xs text-gray-600" id="k1-diff-text">+0.0000 TL / m³ artış</p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 text-xs flex justify-between text-gray-600 font-medium">
+                    <span>Başlangıç: <strong id="k1-start-val">0.00 TL</strong></span>
+                    <span>Bitiş: <strong id="k1-end-val">0.00 TL</strong></span>
+                </div>
+            </div>
+
+            
+            <div class="glass-card rounded-2xl p-5 border-t-4 border-red-800 relative overflow-hidden flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Kademe 2 Zam Oranı</span>
+                        <span class="p-2 bg-red-100 rounded-lg text-red-800 text-xs"><i class="fa-solid fa-chart-line"></i></span>
+                    </div>
+                    <div class="text-3xl font-black text-red-800 my-1" id="k2-rate">%0.00</div>
+                    <p class="text-xs text-gray-600" id="k2-diff-text">+0.0000 TL / m³ artış</p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 text-xs flex justify-between text-gray-600 font-medium">
+                    <span>Başlangıç: <strong id="k2-start-val">0.00 TL</strong></span>
+                    <span>Bitiş: <strong id="k2-end-val">0.00 TL</strong></span>
+                </div>
+            </div>
+
+            
+            <div class="glass-card rounded-2xl p-5 border-t-4 border-amber-500 relative overflow-hidden flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Başlangıç K1/K2 Farkı</span>
+                        <span class="p-2 bg-amber-100 rounded-lg text-amber-700 text-xs"><i class="fa-solid fa-scale-unbalanced"></i></span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-800 my-1" id="start-k1-k2-ratio">%0.00</div>
+                    <p class="text-xs text-gray-600">Kademe 2, Kademe 1'den bu oranda daha pahalı</p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 text-xs flex justify-between text-gray-600 font-medium">
+                    <span>Fark tutarı: <strong id="start-k1-k2-diff">0.00 TL</strong></span>
+                </div>
+            </div>
+
+            
+            <div class="glass-card rounded-2xl p-5 border-t-4 border-emerald-600 relative overflow-hidden flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Bitiş K1/K2 Farkı</span>
+                        <span class="p-2 bg-emerald-100 rounded-lg text-emerald-700 text-xs"><i class="fa-solid fa-scale-unbalanced-flip"></i></span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-800 my-1" id="end-k1-k2-ratio">%0.00</div>
+                    <p class="text-xs text-gray-600">Kademe 2, Kademe 1'den bu oranda daha pahalı</p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 text-xs flex justify-between text-gray-600 font-medium">
+                    <span>Fark tutarı: <strong id="end-k1-k2-diff">0.00 TL</strong></span>
+                </div>
+            </div>
+
+        </section>
+
+        
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            
+            <div class="glass-card rounded-2xl p-6 lg:col-span-1 space-y-4 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center space-x-2 border-b border-gray-200 pb-3 mb-4">
+                        <i class="fa-solid fa-magnifying-glass-chart text-brandRed-600 text-lg"></i>
+                        <h3 class="text-base font-bold text-gray-800">Kademe Geçiş Analizi</h3>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-4 rounded-xl bg-gradient-to-r from-red-50 to-white border border-red-100">
+                            <span class="text-xs font-semibold text-brandRed-800 uppercase block mb-1">Dönem İçi Toplam Artış Oranları</span>
+                            <div class="text-sm text-gray-700 space-y-1">
+                                <div class="flex justify-between">
+                                    <span>K1 Toplam Değişim:</span>
+                                    <span id="detail-k1-change" class="font-bold text-brandRed-600">+%0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>K2 Toplam Değişim:</span>
+                                    <span id="detail-k2-change" class="font-bold text-brandRed-800">+%0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-gray-50 border border-gray-200 space-y-2">
+                            <span class="text-xs font-semibold text-gray-700 uppercase block">Kademeler Arası Çarpan Değişimi</span>
+                            <p class="text-xs text-gray-600 leading-relaxed">
+                                Başlangıç döneminde Kademe 2, Kademe 1'in <strong id="start-multiplier" class="text-gray-900">1.00x</strong> katı iken; bitiş döneminde <strong id="end-multiplier" class="text-gray-900">1.00x</strong> katına ulaşmıştır.
+                            </p>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-red-900 text-white shadow-md space-y-1">
+                            <span class="text-xs text-red-200 uppercase font-semibold">Özet Değerlendirme</span>
+                            <p class="text-xs leading-relaxed opacity-95" id="summary-evaluation">
+                                Seçilen dönemler arasında fiyat farkı ve kademeler arasındaki zam dağılımı stabil görünmektedir.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-[11px] text-gray-500 italic text-center pt-2">
+                    * Tüfe oranında yaşanan değişiklikler sebebiyle müşteriye ulaşan son fiyat değişmektedir. Bu sebeple tam zam oranını anlayabilmek için şirket/il seçimi genel olmalıdır.
+                </div>
+            </div>
+
+            
+            <div class="glass-card rounded-2xl p-6 lg:col-span-2 space-y-4 flex flex-col justify-between">
+                <div>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-gray-200 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-table-list text-brandRed-600 text-lg"></i>
+                            <h3 class="text-base font-bold text-gray-800" id="table-title">Şirket Aylık Fiyat Geçmişi</h3>
+                        </div>
+                        <span class="text-xs bg-red-100 text-brandRed-700 px-3 py-1 rounded-full font-medium">
+                            Seçili Aralık Vurgulanmıştır
+                        </span>
+                    </div>
+
+                    
+                    <div class="overflow-x-auto mt-4 max-h-[380px] rounded-xl border border-gray-200 shadow-inner">
+                        <table class="w-full text-left border-collapse text-xs md:text-sm">
+                            <thead class="bg-gray-100 text-gray-700 uppercase font-bold sticky top-0 backdrop-blur-md bg-opacity-90">
+                                <tr>
+                                    <th class="p-3 border-b">Yıl / Ay</th>
+                                    <th class="p-3 border-b text-right">Kademe 1 (TL/m³)</th>
+                                    <th class="p-3 border-b text-right">Kademe 2 (TL/m³)</th>
+                                    <th class="p-3 border-b text-right">K1 -> K2 Fark (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="price-table-body" class="divide-y divide-gray-200 font-medium">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+    
+    <footer class="mt-8 text-center text-xs text-white/80 font-medium">
+        <p> Sürüm 1.2 </p>
+    </footer>
+
+    
+    <script>
+        const COMPANIES = [
+            "Genel Alış Fiyatı",
+            "Gaziantep",
+            "Kilis",
+            "Kocaeli Plg",
+            "Kocaeli İzg",
+            "Kırklareli",
+            "Edirne",
+            "Tekirdağ",
+            "Erzurum"
+        ];
+
+        const MONTH_NAMES = [
+            "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
+            "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"
+        ];
+
+        const YEARS = [2025, 2026];
+
+        let dbData = {};
+        let ENERGY_PRICES = {};
+
+        
+        const companySelect = document.getElementById('companySelect');
+        const startYearSelect = document.getElementById('startYear');
+        const startMonthSelect = document.getElementById('startMonth');
+        const endYearSelect = document.getElementById('endYear');
+        const endMonthSelect = document.getElementById('endMonth');
+
+        const selectedCompanyBadge = document.getElementById('selected-company-badge');
+        const errorBanner = document.getElementById('error-banner');
+        const errorMessage = document.getElementById('error-message');
+
+        const k1Rate = document.getElementById('k1-rate');
+        const k1DiffText = document.getElementById('k1-diff-text');
+        const k1StartVal = document.getElementById('k1-start-val');
+        const k1EndVal = document.getElementById('k1-end-val');
+
+        const k2Rate = document.getElementById('k2-rate');
+        const k2DiffText = document.getElementById('k2-diff-text');
+        const k2StartVal = document.getElementById('k2-start-val');
+        const k2EndVal = document.getElementById('k2-end-val');
+
+        const startK1K2Ratio = document.getElementById('start-k1-k2-ratio');
+        const startK1K2Diff = document.getElementById('start-k1-k2-diff');
+
+        const endK1K2Ratio = document.getElementById('end-k1-k2-ratio');
+        const endK1K2Diff = document.getElementById('end-k1-k2-diff');
+
+        const detailK1Change = document.getElementById('detail-k1-change');
+        const detailK2Change = document.getElementById('detail-k2-change');
+        const startMultiplier = document.getElementById('start-multiplier');
+        const endMultiplier = document.getElementById('end-multiplier');
+        const summaryEvaluation = document.getElementById('summary-evaluation');
+
+        const tableTitle = document.getElementById('table-title');
+        const priceTableBody = document.getElementById('price-table-body');
+
+        function initDropdowns() {
+            companySelect.innerHTML = COMPANIES.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            const yearOptions = YEARS.map(y => `<option value="${y}">${y}</option>`).join('');
+            startYearSelect.innerHTML = yearOptions;
+            endYearSelect.innerHTML = yearOptions;
+
+            const monthOptions = MONTH_NAMES.map((m, idx) => `<option value="${idx + 1}">${idx + 1} - ${m}</option>`).join('');
+            startMonthSelect.innerHTML = monthOptions;
+            endMonthSelect.innerHTML = monthOptions;
+
+            startYearSelect.value = 2025;
+            startMonthSelect.value = 1;
+            endYearSelect.value = 2026;
+            endMonthSelect.value = 12;
+        }
+
+        function formatTL(val) {
+            return val.toFixed(4) + ' TL';
+        }
+
+        function formatPercent(val) {
+            const prefix = val >= 0 ? '+' : '';
+            return prefix + '%' + val.toFixed(2);
+        }
+
+        
+        async function loadPricesAndInit() {
+            try {
+                const response = await fetch('prices.json?t=' + new Date().getTime());
+                ENERGY_PRICES = await response.json();
+            } catch (error) {
+                console.error("Fiyatlar yüklenemedi:", error);
+                ENERGY_PRICES = {};
+            }
+
+            COMPANIES.forEach(company => {
+                dbData[company] = [];
+                
+                YEARS.forEach(year => {
+                    MONTH_NAMES.forEach((month, mIndex) => {
+                        const monthNumber = mIndex + 1;
+                        let k1Val = 0.0000;
+                        let k2Val = 0.0000;
+
+                        const monthKey = monthNumber < 10 ? "0" + monthNumber : "" + monthNumber;
+
+                        if (
+                            ENERGY_PRICES[company] && 
+                            ENERGY_PRICES[company][year] && 
+                            ENERGY_PRICES[company][year][monthKey]
+                        ) {
+                            k1Val = ENERGY_PRICES[company][year][monthKey].k1;
+                            k2Val = ENERGY_PRICES[company][year][monthKey].k2;
+                        }
+
+                        dbData[company].push({
+                            year: year,
+                            monthIndex: monthNumber,
+                            monthName: month,
+                            k1: k1Val,
+                            k2: k2Val
+                        });
+                    });
+                });
+            });
+
+            initDropdowns();
+            calculateAndRender();
+        }
+
+        function calculateAndRender() {
+            const company = companySelect.value;
+            const startY = parseInt(startYearSelect.value);
+            const startM = parseInt(startMonthSelect.value);
+            const endY = parseInt(endYearSelect.value);
+            const endM = parseInt(endMonthSelect.value);
+
+            if (!dbData[company]) return;
+
+            selectedCompanyBadge.innerText = company;
+            tableTitle.innerText = `${company} Aylık Fiyat Tablosu`;
+
+            const companyRecords = dbData[company];
+
+            const startIndex = companyRecords.findIndex(r => r.year === startY && r.monthIndex === startM);
+            const endIndex = companyRecords.findIndex(r => r.year === endY && r.monthIndex === endM);
+
+            if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
+                errorBanner.classList.remove('hidden');
+                errorMessage.innerText = "Başlangıç dönemi, bitiş döneminden sonra veya geçersiz bir tarih olamaz!";
+                return;
+            } else {
+                errorBanner.classList.add('hidden');
+            }
+
+            const startData = companyRecords[startIndex];
+            const endData = companyRecords[endIndex];
+
+            const k1Diff = endData.k1 - startData.k1;
+            const k1IncreasePct = startData.k1 === 0 ? 0 : (k1Diff / startData.k1) * 100;
+
+            const k2Diff = endData.k2 - startData.k2;
+            const k2IncreasePct = startData.k2 === 0 ? 0 : (k2Diff / startData.k2) * 100;
+
+            const startK2K1Diff = startData.k2 - startData.k1;
+            const startK2K1Pct = startData.k1 === 0 ? 0 : (startK2K1Diff / startData.k1) * 100;
+
+            const endK2K1Diff = endData.k2 - endData.k1;
+            const endK2K1Pct = endData.k1 === 0 ? 0 : (endK2K1Diff / endData.k1) * 100;
+
+            const startMultVal = startData.k1 === 0 ? '1.00' : (startData.k2 / startData.k1).toFixed(2);
+            const endMultVal = endData.k1 === 0 ? '1.00' : (endData.k2 / endData.k1).toFixed(2);
+
+            k1Rate.innerText = formatPercent(k1IncreasePct);
+            k1DiffText.innerText = `${k1Diff >= 0 ? '+' : ''}${k1Diff.toFixed(4)} TL / m³ artış`;
+            k1StartVal.innerText = formatTL(startData.k1);
+            k1EndVal.innerText = formatTL(endData.k1);
+
+            k2Rate.innerText = formatPercent(k2IncreasePct);
+            k2DiffText.innerText = `${k2Diff >= 0 ? '+' : ''}${k2Diff.toFixed(4)} TL / m³ artış`;
+            k2StartVal.innerText = formatTL(startData.k2);
+            k2EndVal.innerText = formatTL(endData.k2);
+
+            startK1K2Ratio.innerText = `%${startK2K1Pct.toFixed(2)}`;
+            startK1K2Diff.innerText = formatTL(startK2K1Diff);
+
+            endK1K2Ratio.innerText = `%${endK2K1Pct.toFixed(2)}`;
+            endK1K2Diff.innerText = formatTL(endK2K1Diff);
+
+            detailK1Change.innerText = formatPercent(k1IncreasePct);
+            detailK2Change.innerText = formatPercent(k2IncreasePct);
+            startMultiplier.innerText = `${startMultVal}x`;
+            endMultiplier.innerText = `${endMultVal}x`;
+
+            if (k1IncreasePct > k2IncreasePct) {
+                summaryEvaluation.innerText = `İncelenen dönemde Kademe 1 fiyat artışı (%${k1IncreasePct.toFixed(2)}), Kademe 2 fiyat artışından (%${k2IncreasePct.toFixed(2)}) daha yüksek gerçekleşmiştir. Kademeler arası makas daralmıştır.`;
+            } else if (k2IncreasePct > k1IncreasePct) {
+                summaryEvaluation.innerText = `İncelenen dönemde Kademe 2 fiyat artışı (%${k2IncreasePct.toFixed(2)}), Kademe 1 fiyat artışından (%${k1IncreasePct.toFixed(2)}) daha yüksek gerçekleşmiştir. Kademe 2 tüketicilerinin maliyet yükü göreceli artmıştır.`;
+            } else {
+                summaryEvaluation.innerText = `Her iki kademede de oransal olarak eşit miktarda (%${k1IncreasePct.toFixed(2)}) artış uygulanmış, kademeler arası oran korunmuştur.`;
+            }
+
+            renderTable(companyRecords, startIndex, endIndex);
+        }
+
+        function renderTable(records, startIndex, endIndex) {
+            priceTableBody.innerHTML = records.map((rec, idx) => {
+                const isSelectedRange = idx >= startIndex && idx <= endIndex;
+                const isBoundary = idx === startIndex || idx === endIndex;
+
+                let rowBgClass = "hover:bg-red-50/50";
+                if (isBoundary) {
+                    rowBgClass = "bg-red-200/80 font-bold text-brandRed-900";
+                } else if (isSelectedRange) {
+                    rowBgClass = "bg-red-50 font-semibold";
+                }
+
+                const diffPct = rec.k1 === 0 ? '0.00' : (((rec.k2 - rec.k1) / rec.k1) * 100).toFixed(2);
+
+                return `
+                    <tr class="${rowBgClass} transition-colors">
+                        <td class="p-3">
+                            ${rec.year} - ${rec.monthName}
+                            ${idx === startIndex ? '<span class="ml-2 text-[10px] bg-brandRed-600 text-white px-1.5 py-0.5 rounded">Başlangıç</span>' : ''}
+                            ${idx === endIndex ? '<span class="ml-2 text-[10px] bg-red-800 text-white px-1.5 py-0.5 rounded">Bitiş</span>' : ''}
+                        </td>
+                        <td class="p-3 text-right font-mono">${rec.k1.toFixed(4)} ₺</td>
+                        <td class="p-3 text-right font-mono">${rec.k2.toFixed(4)} ₺</td>
+                        <td class="p-3 text-right font-mono text-gray-600">+%${diffPct}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        [companySelect, startYearSelect, startMonthSelect, endYearSelect, endMonthSelect].forEach(element => {
+            element.addEventListener('change', calculateAndRender);
+        });
+
+        window.onload = function() {
+            loadPricesAndInit();
+        };
+    </script>
+</body>
+</html>
